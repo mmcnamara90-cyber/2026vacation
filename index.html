@@ -220,7 +220,7 @@
     /* ── PACKING ── */
     .packing-item {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 12px;
       padding: 11px 0;
       border-bottom: 1px solid var(--border);
@@ -232,12 +232,35 @@
       flex-shrink: 0;
       cursor: pointer;
       accent-color: var(--teal);
+      margin-top: 2px;
     }
     .packing-item.packed .pack-text { text-decoration: line-through; color: var(--text-light); }
-    .pack-text { flex: 1; font-size: 17px; }
+    .pack-main { flex: 1; }
+    .pack-text { font-size: 17px; }
+    .pack-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+    .pack-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 100px; font-size: 12px; font-weight: 700; }
+    .pack-tag-shared { background: #E0F5E8; color: var(--success); }
+    .pack-tag-theme  { background: var(--purple-light); color: var(--purple); }
     .cat-head { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-light); margin: 14px 0 4px; }
     .progress-wrap { background: var(--border); border-radius: 100px; height: 14px; overflow: hidden; margin: 8px 0 4px; }
     .progress-fill { height: 100%; border-radius: 100px; transition: width 0.4s ease; }
+
+    /* ── ROTATING BANNER ── */
+    .banner-carousel {
+      background: linear-gradient(135deg, #E6F6F4, #F0FBF9);
+      border: 2px solid var(--teal);
+      border-left: 6px solid var(--teal);
+      border-radius: var(--radius);
+      padding: 18px 20px 14px;
+      margin-bottom: 20px;
+    }
+    .banner-content { font-size: 16px; line-height: 1.6; min-height: 52px; }
+    .banner-content strong { color: var(--teal); font-size: 17px; }
+    @keyframes bannerFade { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
+    .banner-fade { animation: bannerFade 0.45s ease; }
+    .banner-dots { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+    .banner-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(26,140,122,0.25); border: none; cursor: pointer; padding: 0; transition: background 0.2s; }
+    .banner-dot.active { background: var(--teal); transform: scale(1.3); }
 
     /* ── WEATHER ── */
     .weather-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
@@ -282,6 +305,9 @@
     .dream-txt  { font-size: 16px; line-height: 1.4; }
     .dream-day  { font-size: 13px; font-weight: 700; color: var(--teal); margin-top: 2px; }
     .dream-note { font-size: 13px; color: var(--text-light); }
+    .dream-linked { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: var(--purple); background: var(--purple-light); padding: 2px 8px; border-radius: 100px; margin-top: 4px; cursor: pointer; border: none; font-family: inherit; }
+    .dream-link-btn { background: none; border: 1.5px dashed var(--border); border-radius: 100px; font-size: 12px; font-weight: 700; color: var(--text-light); padding: 2px 8px; cursor: pointer; font-family: inherit; margin-top: 4px; transition: all 0.15s; }
+    .dream-link-btn:hover { border-color: var(--purple); color: var(--purple); }
     .add-dream {
       width: 100%;
       padding: 11px;
@@ -298,6 +324,17 @@
     }
     .add-dream:hover { background: var(--mustard-light); border-color: var(--mustard); color: var(--navy); }
 
+    /* ── DREAM CALENDAR ── */
+    .dream-calendar { display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); gap: 12px; margin-top: 16px; }
+    .dcal-card { background: white; border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: 14px 16px; }
+    .dcal-card.sea { background: linear-gradient(135deg, #D8EEFF, #C0D8F0); }
+    .dcal-date { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-light); }
+    .dcal-port { font-size: 15px; font-weight: 700; color: var(--navy); margin: 3px 0 8px; line-height: 1.3; }
+    .dcal-dream { font-size: 13px; padding: 5px 0; border-bottom: 1px solid rgba(0,0,0,0.07); }
+    .dcal-dream:last-child { border-bottom: none; }
+    .dcal-who { font-size: 11px; font-weight: 700; display: block; }
+    .dcal-empty { font-size: 13px; color: var(--text-light); font-style: italic; }
+
     /* ── TO-DOs ── */
     .todo-item {
       background: white;
@@ -310,31 +347,28 @@
       align-items: flex-start;
     }
     .t-bar { width: 5px; border-radius: 100px; flex-shrink: 0; align-self: stretch; min-height: 40px; }
-    .ph  .t-bar { background: var(--terra); }
-    .pm  .t-bar { background: var(--mustard); }
-    .pl  .t-bar { background: var(--success); }
     .t-body { flex: 1; min-width: 0; }
     .t-title { font-size: 18px; font-weight: 600; color: var(--navy); }
     .t-done .t-title { text-decoration: line-through; opacity: 0.55; }
     .t-meta { font-size: 14px; color: var(--text-light); margin-top: 4px; flex-wrap: wrap; display: flex; gap: 6px; align-items: center; }
     .t-desc { font-size: 14px; color: var(--text-light); margin-top: 4px; }
     .t-actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
-    .status-btn {
-      padding: 7px 14px;
-      border-radius: 100px;
-      border: none;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
-      min-height: 36px;
-    }
-    .s-pending     { background: #EFEFEF; color: #555; }
-    .s-in_progress { background: var(--mustard-light); color: #7A5000; }
-    .s-done        { background: #E0F5E8; color: var(--success); }
     .del-btn { background: none; border: none; cursor: pointer; font-size: 18px; color: var(--text-light); padding: 4px; min-width: 36px; min-height: 36px; text-align: center; border-radius: 6px; }
     .del-btn:hover { background: var(--terra-light); color: var(--terra); }
+    .bucket-mover { font-family: inherit; font-size: 12px; padding: 5px 8px; border: 1.5px solid var(--border); border-radius: 6px; background: white; color: var(--text); cursor: pointer; }
+
+    /* ── BUCKET HEADERS ── */
+    .bucket-section { margin-bottom: 28px; }
+    .bucket-hd {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 18px; border-radius: var(--radius);
+      margin-bottom: 12px; font-size: 17px; font-weight: 700;
+    }
+    .bucket-do    { background: linear-gradient(135deg,#FDEAE5,#FFE0D8); border-left: 5px solid var(--terra); color: var(--terra); }
+    .bucket-wait  { background: linear-gradient(135deg,#FFF5D0,#FFEEAA); border-left: 5px solid var(--mustard); color: #7A5000; }
+    .bucket-itin  { background: linear-gradient(135deg,#E0F4F1,#C4EBE6); border-left: 5px solid var(--teal); color: var(--teal); }
+    .bucket-done  { background: #F0F9F4; border-left: 5px solid var(--success); color: var(--success); }
+    .bucket-count { margin-left: auto; font-size: 13px; font-weight: 700; padding: 3px 12px; border-radius: 100px; background: rgba(0,0,0,0.08); color: inherit; }
 
     /* ── FLIGHTS ── */
     .flight-block {
@@ -381,6 +415,16 @@
     .cb-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
     .cb-pill { background: rgba(255,255,255,0.2); padding: 4px 14px; border-radius: 100px; font-size: 13px; font-weight: 700; }
 
+    /* ── TRANSIT ── */
+    .transit-dir-head { font-size: 18px; font-weight: 700; color: var(--navy); margin: 8px 0 12px; display: flex; align-items: center; gap: 8px; }
+    .transit-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 12px; margin-bottom: 24px; }
+    .transit-card { background: white; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+    .transit-head { padding: 12px 16px; font-weight: 700; font-size: 16px; color: white; }
+    .transit-body { padding: 14px 16px; }
+    .transit-method { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+    .transit-note { font-size: 14px; color: var(--text-light); line-height: 1.5; margin-top: 4px; }
+    .transit-confirmed { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: var(--success); background: #E0F5E8; padding: 3px 10px; border-radius: 100px; margin-top: 6px; }
+
     /* ── MODAL ── */
     .modal-bg {
       position: fixed; inset: 0;
@@ -423,31 +467,6 @@
       to   { transform: translateX(0);   opacity: 1; }
     }
 
-    /* ── ALERT BANNER ── */
-    .alert-banner {
-      background: #FFF3CD;
-      border: 2px solid #E8A020;
-      border-left: 6px solid #D94F2B;
-      border-radius: var(--radius);
-      padding: 18px 20px;
-      margin-bottom: 20px;
-      font-size: 16px;
-      line-height: 1.6;
-    }
-    .alert-banner strong { color: var(--terra); font-size: 17px; }
-    .alert-banner a { color: var(--teal); font-weight: 700; }
-    .alert-required {
-      background: var(--terra-light);
-      border: 2px solid var(--terra);
-      border-left: 6px solid var(--terra);
-      border-radius: var(--radius);
-      padding: 18px 20px;
-      margin-bottom: 20px;
-      font-size: 16px;
-      line-height: 1.6;
-    }
-    .alert-required strong { color: var(--terra); }
-
     /* ── POLICY CARDS ── */
     .policy-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 16px; }
     .policy-card {
@@ -484,11 +503,15 @@
     hr.divider   { border: none; border-top: 2px solid var(--border); margin: 20px 0; }
     .page-top    { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 6px; }
 
+    details > summary { list-style: none; }
+    details > summary::-webkit-details-marker { display: none; }
+
     @media (max-width: 560px) {
       .site-header .header-top h1 { font-size: 20px; }
       .tab-btn { font-size: 10px; }
       .cruise-banner { flex-direction: column; gap: 12px; }
       .weather-grid { grid-template-columns: repeat(2, 1fr); }
+      .dream-calendar { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
@@ -534,20 +557,14 @@
       <span class="cb-icon">🚢</span>
       <div>
         <div class="cb-title">Royal Caribbean · Allure of the Seas</div>
-        <div class="cb-sub">Departs Fort Lauderdale · June 21, 2026</div>
+        <div class="cb-sub">Departs Fort Lauderdale · June 21, 2026 · Sky Class ✨</div>
         <div class="cb-pills">
+          <span class="cb-pill">🇺🇸 Fort Lauderdale</span>
           <span class="cb-pill">🇯🇲 Falmouth, Jamaica</span>
           <span class="cb-pill">🇧🇸 CocoCay</span>
           <span class="cb-pill">🇧🇸 Nassau, Bahamas</span>
         </div>
       </div>
-    </div>
-
-    <!-- Consent form alert -->
-    <div class="alert-required">
-      🚨 <strong>ACTION REQUIRED — Children's Consent Form</strong><br>
-      Royal Caribbean flagged PJ's booking for traveling with children. <strong>Any adult who is not the parent or legal guardian of a child must bring a notarized consent form to the pier.</strong> Children with different last names than the traveling adult also need a birth certificate. Missing this = denied boarding, no refund.<br>
-      <a href="https://www.royalcaribbean.com/plan-a-cruise/travel-documents" target="_blank" style="color:var(--terra);font-weight:700">→ Get the form at RoyalCaribbean.com</a>
     </div>
 
     <div class="page-top">
@@ -562,60 +579,78 @@
 
     <!-- Cruise Reminders -->
     <div style="margin-top:32px">
-      <div class="section-title" style="font-size:20px;margin-bottom:4px">📋 Cruise Reminders</div>
-      <div class="section-sub">Policies that apply to the Allure of the Seas sailing.</div>
+      <div class="section-title" style="font-size:20px;margin-bottom:4px">📋 Cruise Reminders & Sky Class Tips</div>
+      <div class="section-sub">Policies and tips for the Allure sailing — tailored for Sky Class guests.</div>
       <div class="policy-grid">
+
         <div class="policy-card" style="border-left-color:var(--terra)">
           <span class="pc-icon">🥂</span>
           <strong>Alcohol Policy</strong>
           Each adult may bring <em>one 750ml bottle of wine or champagne</em> on boarding day via carry-on. No boxed wine. All other purchased bottles stored until final day.
         </div>
-        <div class="policy-card" style="border-left-color:var(--mustard)">
-          <span class="pc-icon">💵</span>
-          <strong>Gratuities</strong>
-          $18.50/person/day auto-charged to SeaPass. Suite guests: $21/day. Beverages add 18%, spa adds 20% automatically.
-        </div>
+
         <div class="policy-card" style="border-left-color:var(--teal)">
           <span class="pc-icon">🧴</span>
           <strong>Reef-Safe Sunscreen Required</strong>
-          Jamaica & Bahamas ban oxybenzone, octinoxate, octocrylene & titanium dioxide. Buy reef-safe before you go — hard to find at ports.
+          Jamaica &amp; Bahamas ban oxybenzone, octinoxate, octocrylene &amp; titanium dioxide. Buy reef-safe before you go — hard to find at ports.
         </div>
+
         <div class="policy-card" style="border-left-color:var(--purple)">
           <span class="pc-icon">📱</span>
           <strong>Online Check-In</strong>
           Complete at RoyalCaribbean.com by <strong>June 18</strong> (3 days before sailing). Print SetSail passes and bring them to the pier.
         </div>
-        <div class="policy-card" style="border-left-color:var(--navy)">
-          <span class="pc-icon">🚁</span>
-          <strong>No Drones on Ship</strong>
-          Drones allowed on land only, outside port areas. Not permitted onboard ship or at CocoCay. Violations = confiscation.
-        </div>
-        <div class="policy-card" style="border-left-color:#E8A020">
-          <span class="pc-icon">🧳</span>
-          <strong>Overnight Bag</strong>
-          Pack a separate bag for the last night (June 27). Checked luggage is collected that evening and you won't have it until disembarkation.
-        </div>
+
         <div class="policy-card" style="border-left-color:var(--success)">
           <span class="pc-icon">💊</span>
           <strong>Medications in Carry-On</strong>
           Keep all medications in carry-on, in original labeled containers. Pack 3 extra days in case of itinerary changes.
         </div>
-        <div class="policy-card" style="border-left-color:var(--terra)">
-          <span class="pc-icon">🛟</span>
-          <strong>Muster Drill — Mandatory</strong>
-          Safety briefing required for all guests on June 21. Complete via Royal Caribbean app (eMuster) before leaving port.
+
+        <div class="policy-card" style="border-left-color:var(--mustard)">
+          <span class="pc-icon">🎭</span>
+          <strong>Shows: Use Your Concierge</strong>
+          Broadway productions and AquaTheater shows have reserved Sky Class seating sections. Share your show preferences in the <em>suite welcome email</em> — no need to book independently beforehand.
         </div>
+
+        <div class="policy-card" style="border-left-color:var(--terra)">
+          <span class="pc-icon">👑</span>
+          <strong>Sky Class Boarding</strong>
+          As Sky Class guests, you board through a <strong>dedicated priority lane</strong> before general boarding. No need to race to the pier — you won't wait in the main queue.
+        </div>
+
+        <div class="policy-card" style="border-left-color:var(--teal)">
+          <span class="pc-icon">🍳</span>
+          <strong>Skip the Buffet for Breakfast</strong>
+          Room service breakfast is included in your suite. Or head to <strong>Coastal Kitchen</strong> — the suite-exclusive restaurant with sit-down service. Both beat the Windjammer every time.
+        </div>
+
+        <div class="policy-card" style="border-left-color:var(--navy)">
+          <span class="pc-icon">💵</span>
+          <strong>$1 Bills for the Ports</strong>
+          Jamaica and Nassau have a strong tip culture. Bring a stack of $1 bills for vendors, local guides, and photo opportunities ashore.
+        </div>
+
       </div>
+    </div>
+
+    <!-- Transit Section -->
+    <div style="margin-top:36px" id="transit-section">
+      <div class="section-title" style="font-size:20px;margin-bottom:4px">🚌 Getting To &amp; From the Ship</div>
+      <div class="section-sub">How each family is traveling to and from Port Everglades.</div>
+      <div id="transit-content"><div class="loading">⏳ Loading…</div></div>
     </div>
   </div>
 
   <!-- ── PACKING TAB ── -->
   <div class="tab-panel" id="panel-packing">
     <div class="section-title">🧳 Packing Lists</div>
-    <div class="section-sub">Check off items as you pack. Each family has their own list.</div>
-    <div class="alert-banner">
-      🌊 <strong>Reef-Safe Sunscreen Required in Jamaica & Bahamas</strong><br>
-      Avoid sunscreens with oxybenzone, octinoxate, octocrylene, or titanium dioxide — these are banned and harm coral reefs. Look for mineral sunscreens with non-nano zinc oxide. Buy before you travel; options are limited at port.
+    <div class="section-sub">Check off items as you pack. Tag items as shared or for a theme night!</div>
+
+    <!-- Rotating tip banner -->
+    <div class="banner-carousel">
+      <div class="banner-content" id="banner-content">Loading tips…</div>
+      <div class="banner-dots" id="banner-dots"></div>
     </div>
 
     <div class="family-tabs">
@@ -640,12 +675,13 @@
   <!-- ── DREAMS TAB ── -->
   <div class="tab-panel" id="panel-dreams">
     <div class="section-title">✨ Dream List</div>
-    <div class="section-sub">Each person shares up to 2 things they're most excited about. We'll make them happen!</div>
+    <div class="section-sub">Each person shares up to 2 things they're most excited about. Link matching dreams to plan together!</div>
     <div class="person-grid" id="dreams-grid"><div class="loading">⏳ Loading…</div></div>
 
-    <div id="all-dreams-section" style="display:none;margin-top:32px">
-      <div class="section-title" style="font-size:20px;margin-bottom:12px">📅 All Dreams at a Glance</div>
-      <div id="all-dreams-list"></div>
+    <div id="dream-calendar-section" style="margin-top:36px;display:none">
+      <div class="section-title" style="font-size:20px;margin-bottom:4px">📅 Cruise Calendar</div>
+      <div class="section-sub">Dreams assigned to each day of the trip.</div>
+      <div class="dream-calendar" id="dream-calendar"></div>
     </div>
   </div>
 
@@ -654,18 +690,10 @@
     <div class="page-top">
       <div>
         <div class="section-title">✅ To-Do List</div>
-        <div class="section-sub">Everything that needs to get done before and during the trip.</div>
+        <div class="section-sub">Organized by when you can take action.</div>
       </div>
       <button class="btn btn-primary" onclick="openTodoModal()">+ Add Task</button>
     </div>
-
-    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
-      <button class="btn btn-ghost btn-sm active-filter" id="f-all"     onclick="filterTodos('all')">All</button>
-      <button class="btn btn-ghost btn-sm" id="f-high"    onclick="filterTodos('high')">🔴 High Priority</button>
-      <button class="btn btn-ghost btn-sm" id="f-pending" onclick="filterTodos('pending')">⏳ Pending</button>
-      <button class="btn btn-ghost btn-sm" id="f-done"    onclick="filterTodos('done')">✅ Done</button>
-    </div>
-
     <div id="todos-list"><div class="loading">⏳ Loading…</div></div>
   </div>
 
@@ -802,12 +830,25 @@
       <select id="p-cat">
         <option value="Clothes">👕 Clothes</option>
         <option value="Toiletries">🧴 Toiletries</option>
-        <option value="Documents">📄 Documents & ID</option>
+        <option value="Documents">📄 Documents &amp; ID</option>
         <option value="Electronics">📱 Electronics</option>
-        <option value="Beach & Pool">🏖️ Beach & Pool</option>
-        <option value="Health">💊 Health & Medicine</option>
+        <option value="Beach &amp; Pool">🏖️ Beach &amp; Pool</option>
+        <option value="Health">💊 Health &amp; Medicine</option>
         <option value="Entertainment">🎮 Entertainment</option>
         <option value="General">📦 General</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:700">
+        <input type="checkbox" id="p-shared" style="width:22px;height:22px;flex-shrink:0;accent-color:var(--teal)">
+        🤝 Shared with the whole group
+      </label>
+    </div>
+    <div class="form-group">
+      <label>Theme Night</label>
+      <select id="p-theme">
+        <option value="">Not a theme night item</option>
+        <option value="Resort Casual">🌴 Night 1: Resort Casual</option>
       </select>
     </div>
     <div class="modal-foot">
@@ -831,12 +872,12 @@
       <label>Assign to a day <span style="font-weight:400;color:var(--text-light)">(optional)</span></label>
       <select id="d-day">
         <option value="">Not scheduled yet</option>
-        <option value="June 21 — Departure Day">June 21 — Departure Day (Fort Lauderdale)</option>
+        <option value="June 21 — Departure Day (Fort Lauderdale)">June 21 — Departure Day (Fort Lauderdale)</option>
         <option value="June 22 — Day at Sea">June 22 — Day at Sea</option>
         <option value="June 23 — Falmouth, Jamaica">June 23 — Falmouth, Jamaica 🇯🇲</option>
         <option value="June 24 — Day at Sea">June 24 — Day at Sea</option>
-        <option value="June 25 — CocoCay">June 25 — CocoCay, Bahamas 🇧🇸</option>
-        <option value="June 26 — Nassau">June 26 — Nassau, Bahamas 🇧🇸</option>
+        <option value="June 25 — CocoCay, Bahamas">June 25 — CocoCay, Bahamas 🇧🇸</option>
+        <option value="June 26 — Nassau, Bahamas">June 26 — Nassau, Bahamas 🇧🇸</option>
         <option value="June 27 — Day at Sea">June 27 — Day at Sea</option>
         <option value="June 28 — Return Day">June 28 — Return Day</option>
       </select>
@@ -852,7 +893,24 @@
   </div>
 </div>
 
-<!-- Todo Modal -->
+<!-- Dream Link Modal -->
+<div class="modal-bg hidden" id="m-link">
+  <div class="modal">
+    <h3>🔗 Link Dreams</h3>
+    <p style="color:var(--text-light);margin-bottom:20px;font-size:16px">Connect this dream with someone else who shares the same idea — they'll appear together on the calendar.</p>
+    <input type="hidden" id="link-from-id">
+    <div class="form-group">
+      <label>Link with this dream:</label>
+      <select id="link-to-dream" style="font-size:16px"></select>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-link')">Cancel</button>
+      <button class="btn btn-purple" onclick="saveDreamLink()">Link Dreams 🔗</button>
+    </div>
+  </div>
+</div>
+
+<!-- To-Do Modal -->
 <div class="modal-bg hidden" id="m-todo">
   <div class="modal">
     <h3>✅ Add a Task</h3>
@@ -864,29 +922,27 @@
       <label>Details <span style="font-weight:400;color:var(--text-light)">(optional)</span></label>
       <textarea id="t-desc" placeholder="Any extra info…" style="min-height:60px"></textarea>
     </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Priority</label>
-        <select id="t-pri">
-          <option value="high">🔴 High — Must Do</option>
-          <option value="medium" selected>🟡 Medium</option>
-          <option value="low">🟢 Low — Nice to Do</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Assign To</label>
-        <select id="t-assign">
-          <option value="">Anyone</option>
-          <option value="All Families">All Families</option>
-          <option value="Swanson Family">Swanson Family</option>
-          <option value="McNamara Family">McNamara Family</option>
-          <option value="PJ">PJ</option>
-          <option value="Michelle">Michelle</option>
-          <option value="Jeremy">Jeremy</option>
-          <option value="Rob">Rob</option>
-          <option value="Bree">Bree</option>
-        </select>
-      </div>
+    <div class="form-group">
+      <label>When can you act on this?</label>
+      <select id="t-bucket">
+        <option value="do_now">🟢 Do Now — No blockers today</option>
+        <option value="waiting_concierge">⏳ Waiting on Concierge Email</option>
+        <option value="waiting_itinerary">📋 Waiting on Full RC Itinerary</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Assign To</label>
+      <select id="t-assign">
+        <option value="">Anyone</option>
+        <option value="All Families">All Families</option>
+        <option value="Swanson Family">Swanson Family</option>
+        <option value="McNamara Family">McNamara Family</option>
+        <option value="PJ">PJ</option>
+        <option value="Michelle">Michelle</option>
+        <option value="Jeremy">Jeremy</option>
+        <option value="Rob">Rob</option>
+        <option value="Bree">Bree</option>
+      </select>
     </div>
     <div class="form-group">
       <label>Due Date <span style="font-weight:400;color:var(--text-light)">(optional)</span></label>
@@ -895,6 +951,38 @@
     <div class="modal-foot">
       <button class="btn btn-ghost" onclick="closeModal('m-todo')">Cancel</button>
       <button class="btn btn-primary" onclick="saveTodo()">Add Task ✅</button>
+    </div>
+  </div>
+</div>
+
+<!-- Transit Edit Modal -->
+<div class="modal-bg hidden" id="m-transit">
+  <div class="modal">
+    <h3 id="transit-modal-title">✏️ Edit Transit Plan</h3>
+    <input type="hidden" id="tr-id">
+    <div class="form-group">
+      <label>How are you getting there?</label>
+      <select id="tr-method">
+        <option value="hotel_shuttle">🚌 Hotel Shuttle</option>
+        <option value="air2sea">✈️ Royal Caribbean Air2Sea</option>
+        <option value="rideshare">🚗 Rideshare (Uber / Lyft)</option>
+        <option value="own_car">🚙 Own Vehicle</option>
+        <option value="undecided">❓ Not Decided Yet</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Notes <span style="font-weight:400;color:var(--text-light)">(optional)</span></label>
+      <textarea id="tr-notes" placeholder="e.g. Pickup time, terminal, confirmation #…" style="min-height:60px"></textarea>
+    </div>
+    <div class="form-group">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+        <input type="checkbox" id="tr-confirmed" style="width:22px;height:22px;flex-shrink:0;accent-color:var(--teal)">
+        ✅ Confirmed / Booked
+      </label>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-transit')">Cancel</button>
+      <button class="btn btn-teal" onclick="saveTransit()">Save 🚌</button>
     </div>
   </div>
 </div>
@@ -941,6 +1029,14 @@ const ITINERARY = [
   { date:'2026-06-28', label:'Jun 28', port:'Fort Lauderdale',   emoji:'🇺🇸', sea:false, lat:26.1224, lon:-80.1373 },
 ];
 
+const TRANSIT_LABELS = {
+  hotel_shuttle: '🚌 Hotel Shuttle',
+  air2sea:       '✈️ RC Air2Sea',
+  rideshare:     '🚗 Rideshare (Uber/Lyft)',
+  own_car:       '🚙 Own Vehicle',
+  undecided:     '❓ Not Decided Yet',
+};
+
 const WMO = {
   0:{d:'Clear Sky',emoji:'☀️'}, 1:{d:'Mainly Clear',emoji:'🌤️'}, 2:{d:'Partly Cloudy',emoji:'⛅'},
   3:{d:'Overcast',emoji:'☁️'}, 45:{d:'Foggy',emoji:'🌫️'}, 48:{d:'Icy Fog',emoji:'🌫️'},
@@ -951,11 +1047,55 @@ const WMO = {
 };
 
 // ── STATE ──
-let curFamily = 'Swanson';
-let curFilter = 'all';
-let allTodos  = [];
+let curFamily  = 'Swanson';
+let allTodos   = [];
 let allFlights = [];
 let allDreams  = [];
+let allTransit = [];
+let bannerIdx  = 0;
+let bannerTimer = null;
+
+// ── BANNER TIPS ──
+const BANNER_TIPS = [
+  { icon:'🧴', title:'Reef-Safe Sunscreen Required', text:'Jamaica & Bahamas ban oxybenzone and similar chemicals. Look for mineral-only, non-nano zinc oxide. Buy before you go — ports rarely carry it.' },
+  { icon:'🧲', title:'Pack Magnetic Hooks', text:'Cabin walls are metal. A few small magnetic hooks hold wet swimsuits, bags, and lanyards without damaging the walls. Game-changer for small cabins.' },
+  { icon:'🔌', title:'Bring a Plain Power Strip', text:'Cabins have 1–2 outlets for the whole family. Pack a regular (non-surge-protected) power strip — surge strips get confiscated at boarding.' },
+  { icon:'🎒', title:'Small Day Pack for Ports', text:'You\'ll need hands-free carrying at Falmouth, CocoCay, and Nassau. Pack a lightweight backpack for water, sunscreen, and purchases ashore.' },
+  { icon:'💵', title:'$1 Bills for the Ports', text:'Jamaica and Nassau have strong tip culture. A stack of $1s makes tipping vendors, guides, and photo ops easy without having to break bigger bills.' },
+  { icon:'🌧️', title:'Pack a Packable Rain Poncho', text:'Caribbean weather can surprise you. A light packable poncho fits in a day bag and can save a shore excursion from getting soaked.' },
+  { icon:'💊', title:'Motion Sickness Prep', text:'Even if you\'ve never had trouble before, pack Dramamine or Sea-Bands. Atlantic waters can be rougher than Caribbean itineraries look on a map.' },
+  { icon:'🥿', title:'Reef Shoes for CocoCay', text:'The beach at CocoCay can have rocky entry points. Water shoes make the swim-in much more comfortable, especially for the little ones.' },
+  { icon:'📵', title:'Airplane Mode = No Surprise Bills', text:'Turn airplane mode on immediately after boarding to avoid international roaming charges. Purchase a ship WiFi package if needed.' },
+  { icon:'🌅', title:'Wake Up for Port Arrivals', text:'Cruising into Nassau or Jamaica in the early morning is stunning. Set an alarm and watch from the upper decks as the ship docks — the kids will love it.' },
+  { icon:'🧾', title:'Check Your SeaPass Balance Daily', text:'Charges can stack up fast. Review your account each morning to catch any errors early — much easier to dispute on Day 2 than on the last night.' },
+  { icon:'👟', title:'Wear Your Most Comfortable Shoes', text:'Embarkation day involves a lot of walking. Save the cute sandals for later — broken-in shoes on Day 1 make the whole check-in process much smoother.' },
+];
+
+function renderBanner() {
+  const tip = BANNER_TIPS[bannerIdx];
+  const el = document.getElementById('banner-content');
+  el.classList.remove('banner-fade');
+  void el.offsetWidth;
+  el.innerHTML = `${tip.icon} <strong>${tip.title}</strong> — ${tip.text}`;
+  el.classList.add('banner-fade');
+
+  const dotsEl = document.getElementById('banner-dots');
+  dotsEl.innerHTML = BANNER_TIPS.map((_, i) =>
+    `<button class="banner-dot ${i===bannerIdx?'active':''}" onclick="jumpBanner(${i})" aria-label="Tip ${i+1}"></button>`
+  ).join('');
+}
+
+function jumpBanner(i) {
+  bannerIdx = i;
+  renderBanner();
+  clearInterval(bannerTimer);
+  bannerTimer = setInterval(nextBanner, 5500);
+}
+
+function nextBanner() {
+  bannerIdx = (bannerIdx + 1) % BANNER_TIPS.length;
+  renderBanner();
+}
 
 // ── COUNTDOWN ──
 function updateCountdown() {
@@ -994,13 +1134,12 @@ document.querySelectorAll('.modal-bg').forEach(bg => {
 });
 
 // ══════════════════════════════════════════
-// TRAVEL TAB
+// TRAVEL TAB — FLIGHTS
 // ══════════════════════════════════════════
 function openFlightModal() {
-  // Reset time selectors to blank/defaults
   ['f-dep-hr','f-arr-hr'].forEach(id => document.getElementById(id).value = '');
   ['f-dep-min','f-arr-min'].forEach(id => document.getElementById(id).value = '00');
-  ['f-dep-ampm'].forEach(id => document.getElementById(id).value = 'AM');
+  document.getElementById('f-dep-ampm').value = 'AM';
   document.getElementById('f-arr-ampm').value = 'PM';
   document.getElementById('f-dep-date').value = '';
   document.getElementById('f-arr-date').value = '';
@@ -1020,7 +1159,7 @@ function buildDatetime(dateId, hrId, minId, ampmId) {
 }
 
 async function loadFlights() {
-  const { data } = await sb.from('vacation_flights').select('*').order('direction').order('created_at');
+  const { data } = await sb.from('vacation_flights').select('*').order('direction').order('departure_time');
   allFlights = data || [];
   renderFlights();
 }
@@ -1046,6 +1185,8 @@ function renderFlights() {
         <span style="font-size:14px;opacity:0.85">${fFlights.length} flight${fFlights.length>1?'s':''}</span>
       </div>`;
     for (const f of fFlights) {
+      const depDate = f.departure_time ? f.departure_time.slice(0,10) : '';
+      const safeNum = (f.flight_number||'').replace(/'/g,"\\'");
       html += `<div class="flight-card">
         <div class="f-dir">${f.direction==='inbound'?'🛬 Inbound → Fort Lauderdale':'🛫 Outbound → Flying Home'}</div>
         <div class="f-route">
@@ -1060,7 +1201,7 @@ function renderFlights() {
           ${f.notes?'<br>📝 '+f.notes:''}
         </div>
         <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-          ${f.flight_number ? `<button class="btn btn-teal btn-sm" onclick="checkFlightStatus('${f.id}','${f.flight_number.replace(/'/g,"\\'")}')">📡 Check Status</button>` : ''}
+          ${f.flight_number ? `<button class="btn btn-teal btn-sm" onclick="checkFlightStatus('${f.id}','${safeNum}','${depDate}')">📡 Check Status</button>` : ''}
           <button class="btn btn-ghost btn-sm" onclick="delFlight('${f.id}')">🗑️ Remove</button>
         </div>
         <div id="fstatus-${f.id}" style="display:none"></div>
@@ -1098,63 +1239,107 @@ async function delFlight(id) {
   loadFlights();
 }
 
-async function checkFlightStatus(flightId, flightNumber) {
+async function checkFlightStatus(flightId, flightNumber, flightDate) {
   const el = document.getElementById(`fstatus-${flightId}`);
   el.style.display = 'block';
   el.innerHTML = `<div class="status-result">📡 Checking status for ${flightNumber}…</div>`;
 
   try {
+    const body = { flightNumber };
+    if (flightDate) body.flightDate = flightDate;
+
     const res = await fetch('https://viudclgcdsskzlfosflg.supabase.co/functions/v1/aviation-proxy', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ flightNumber }),
+      body: JSON.stringify(body),
     });
     const data = await res.json();
 
     if (!data.found) {
-      el.innerHTML = `<div class="status-result">📅 No live data yet for <strong>${flightNumber}</strong>. Flight status becomes available closer to departure day.</div>`;
+      el.innerHTML = `<div class="status-result">📅 No live data yet for <strong>${flightNumber}</strong>. Flight status becomes available closer to the departure date.</div>`;
       return;
     }
 
-    const statusEmoji = {
-      active: '🛫', scheduled: '📅', landed: '🛬', cancelled: '❌',
-      incident: '⚠️', diverted: '↩️',
-    };
-    const statusClass = {
-      active: 'status-ontime', scheduled: 'status-ontime', landed: 'status-landed',
-      cancelled: 'status-cancelled', incident: 'status-delayed', diverted: 'status-delayed',
-    };
+    const statusEmoji = { active:'🛫', scheduled:'📅', landed:'🛬', cancelled:'❌', incident:'⚠️', diverted:'↩️' };
+    const statusClass = { active:'status-ontime', scheduled:'status-ontime', landed:'status-landed', cancelled:'status-cancelled', incident:'status-delayed', diverted:'status-delayed' };
     const s = data.status || 'unknown';
-    const emoji = statusEmoji[s] || '✈️';
     const cls = statusClass[s] || '';
-
     const fmtTime = t => t ? new Date(t).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '—';
     const dep = data.departure, arr = data.arrival;
     const delayNote = dep.delay ? `<span style="color:var(--terra);font-weight:700"> · ${dep.delay} min delay</span>` : '';
 
     el.innerHTML = `<div class="status-result ${cls}">
-      <div class="status-label">${emoji} ${data.flightNumber} — ${s.charAt(0).toUpperCase()+s.slice(1)}${delayNote}</div>
+      <div class="status-label">${statusEmoji[s]||'✈️'} ${data.flightNumber} — ${s.charAt(0).toUpperCase()+s.slice(1)}${delayNote}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:14px">
-        <div>
-          <strong>Departure</strong><br>
-          ${dep.airport||'—'} (${dep.iata||'—'})<br>
-          Scheduled: ${fmtTime(dep.scheduled)}<br>
-          ${dep.actual?'Actual: '+fmtTime(dep.actual)+'<br>':''}
-          ${dep.terminal?'Terminal '+dep.terminal:''}${dep.gate?' Gate '+dep.gate:''}
-        </div>
-        <div>
-          <strong>Arrival</strong><br>
-          ${arr.airport||'—'} (${arr.iata||'—'})<br>
-          Scheduled: ${fmtTime(arr.scheduled)}<br>
-          ${arr.actual?'Actual: '+fmtTime(arr.actual)+'<br>':''}
-          ${arr.estimated&&!arr.actual?'Estimated: '+fmtTime(arr.estimated)+'<br>':''}
-          ${arr.terminal?'Terminal '+arr.terminal:''}${arr.gate?' Gate '+arr.gate:''}
-        </div>
+        <div><strong>Departure</strong><br>${dep.airport||'—'} (${dep.iata||'—'})<br>Scheduled: ${fmtTime(dep.scheduled)}<br>${dep.actual?'Actual: '+fmtTime(dep.actual)+'<br>':''}${dep.terminal?'Terminal '+dep.terminal:''}${dep.gate?' Gate '+dep.gate:''}</div>
+        <div><strong>Arrival</strong><br>${arr.airport||'—'} (${arr.iata||'—'})<br>Scheduled: ${fmtTime(arr.scheduled)}<br>${arr.actual?'Actual: '+fmtTime(arr.actual)+'<br>':''}${arr.estimated&&!arr.actual?'Estimated: '+fmtTime(arr.estimated)+'<br>':''}${arr.terminal?'Terminal '+arr.terminal:''}${arr.gate?' Gate '+arr.gate:''}</div>
       </div>
     </div>`;
   } catch(e) {
     el.innerHTML = `<div class="status-result">⚠️ Could not reach flight status service. Please try again.</div>`;
   }
+}
+
+// ══════════════════════════════════════════
+// TRANSIT
+// ══════════════════════════════════════════
+async function loadTransit() {
+  const { data } = await sb.from('vacation_transit').select('*').order('created_at');
+  allTransit = data || [];
+  renderTransit();
+}
+
+function renderTransit() {
+  const el = document.getElementById('transit-content');
+  const toShip   = allTransit.filter(t => t.direction === 'to_ship');
+  const fromShip = allTransit.filter(t => t.direction === 'from_ship');
+
+  function renderCards(items) {
+    return items.map(t => {
+      const cfg = FAMILIES[t.family] || { bg:'#888', light:'#eee' };
+      const isAir2Sea = t.method === 'air2sea';
+      return `<div class="transit-card">
+        <div class="transit-head" style="background:${cfg.bg}">${t.family === 'PJ' ? '🎉 PJ' : t.family === 'Swanson' ? '🏄 Swansons' : '🌺 McNamaras'}</div>
+        <div class="transit-body">
+          <div class="transit-method">${TRANSIT_LABELS[t.method] || '❓ Not Decided'}</div>
+          ${t.notes ? `<div class="transit-note">${t.notes}</div>` : ''}
+          ${isAir2Sea ? `<div style="background:var(--purple-light);border:1.5px solid var(--purple);border-radius:8px;padding:10px 12px;margin-top:8px;font-size:14px;color:var(--purple);line-height:1.5"><strong style="display:block;margin-bottom:4px">📞 Action Required</strong>Contact Royal Caribbean to arrange Air2Sea group transfer. Book through the Cruise Planner in your RC account.</div>` : ''}
+          ${t.confirmed ? `<div class="transit-confirmed">✅ Confirmed</div>` : ''}
+          <button class="btn btn-ghost btn-sm" style="margin-top:10px;width:100%" onclick="openTransitEdit('${t.id}')">✏️ Edit</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  el.innerHTML = `
+    <div class="transit-dir-head">🛳️ Getting to the Ship <span style="font-size:14px;font-weight:500;color:var(--text-light)">— June 21</span></div>
+    <div class="transit-grid">${renderCards(toShip)}</div>
+    <div class="transit-dir-head">🏠 Getting Home <span style="font-size:14px;font-weight:500;color:var(--text-light)">— June 28</span></div>
+    <div class="transit-grid">${renderCards(fromShip)}</div>`;
+}
+
+function openTransitEdit(id) {
+  const t = allTransit.find(x => x.id === id);
+  if (!t) return;
+  document.getElementById('tr-id').value = id;
+  document.getElementById('tr-method').value = t.method;
+  document.getElementById('tr-notes').value  = t.notes || '';
+  document.getElementById('tr-confirmed').checked = t.confirmed;
+  const dirLabel = t.direction === 'to_ship' ? 'To the Ship' : 'Getting Home';
+  document.getElementById('transit-modal-title').textContent = `✏️ ${t.family} — ${dirLabel}`;
+  openModal('m-transit');
+}
+
+async function saveTransit() {
+  const id     = document.getElementById('tr-id').value;
+  const method = document.getElementById('tr-method').value;
+  const notes  = document.getElementById('tr-notes').value.trim();
+  const confirmed = document.getElementById('tr-confirmed').checked;
+  const { error } = await sb.from('vacation_transit').update({ method, notes: notes||null, confirmed }).eq('id', id);
+  if (error) { toast('Error saving','err'); return; }
+  toast('Transit updated! 🚌');
+  closeModal('m-transit');
+  loadTransit();
 }
 
 // ══════════════════════════════════════════
@@ -1196,8 +1381,7 @@ function renderPacking(fam, items) {
     </div>
   </div>`;
 
-  const members = cfg.members;
-  for (const m of members) {
+  for (const m of cfg.members) {
     const mItems = items.filter(i => i.person === m);
     html += `<div class="card">
       <div class="card-title">
@@ -1213,9 +1397,15 @@ function renderPacking(fam, items) {
       for (const [cat, catItems] of Object.entries(byCat)) {
         html += `<div class="cat-head">${cat}</div>`;
         catItems.forEach(i => {
+          const tags = [];
+          if (i.is_shared) tags.push(`<span class="pack-tag pack-tag-shared">🤝 Shared</span>`);
+          if (i.theme_night) tags.push(`<span class="pack-tag pack-tag-theme">🎉 ${i.theme_night}</span>`);
           html += `<div class="packing-item ${i.packed?'packed':''}" id="pi-${i.id}">
             <input type="checkbox" class="packing-checkbox" ${i.packed?'checked':''} onchange="togglePacked('${i.id}',this.checked,'${fam}')">
-            <span class="pack-text">${i.item}</span>
+            <div class="pack-main">
+              <div class="pack-text">${i.item}</div>
+              ${tags.length ? `<div class="pack-tags">${tags.join('')}</div>` : ''}
+            </div>
             <button onclick="delPacking('${i.id}','${fam}')" class="del-btn">×</button>
           </div>`;
         });
@@ -1224,7 +1414,7 @@ function renderPacking(fam, items) {
     html += '</div>';
   }
 
-  html += `<button class="btn btn-mustard btn-full" onclick="openPackModal('${fam}','${members[0]}')">+ Add Item for ${fam} Family</button>`;
+  html += `<button class="btn btn-mustard btn-full" onclick="openPackModal('${fam}','${cfg.members[0]}')">+ Add Item for ${fam} Family</button>`;
   el.innerHTML = html;
 }
 
@@ -1232,18 +1422,23 @@ function openPackModal(fam, person) {
   const sel = document.getElementById('p-person');
   sel.innerHTML = FAMILIES[fam].members.map(m => `<option value="${m}" ${m===person?'selected':''}>${m}</option>`).join('');
   document.getElementById('p-item').value = '';
+  document.getElementById('p-shared').checked = false;
+  document.getElementById('p-theme').value = '';
   openModal('m-packing');
 }
 
 async function savePackingItem() {
   const item = document.getElementById('p-item').value.trim();
   if (!item) { toast('Please enter an item name','err'); return; }
+  const themeVal = document.getElementById('p-theme').value;
   const { error } = await sb.from('vacation_packing').insert({
-    family: curFamily,
-    person: document.getElementById('p-person').value,
+    family:     curFamily,
+    person:     document.getElementById('p-person').value,
     item,
-    category: document.getElementById('p-cat').value,
-    packed: false,
+    category:   document.getElementById('p-cat').value,
+    packed:     false,
+    is_shared:  document.getElementById('p-shared').checked,
+    theme_night: themeVal || null,
   });
   if (error) { toast('Error saving item','err'); return; }
   toast('Item added! 🧳');
@@ -1270,7 +1465,6 @@ async function delPacking(id, fam) {
 async function loadWeather() {
   const grid = document.getElementById('weather-grid');
   grid.innerHTML = '';
-  let anyForecast = false;
 
   for (const stop of ITINERARY) {
     const card = document.createElement('div');
@@ -1281,7 +1475,7 @@ async function loadWeather() {
         <div class="w-date">${stop.label}</div>
         <div class="w-port">Day at Sea</div>
         <span class="w-emoji">🌊</span>
-        <div class="w-desc">Relax & explore the ship!</div>`;
+        <div class="w-desc">Relax &amp; explore the ship!</div>`;
       grid.appendChild(card);
       continue;
     }
@@ -1300,12 +1494,11 @@ async function loadWeather() {
       const d    = json.daily;
 
       if (d && d.temperature_2m_max && d.temperature_2m_max.length > 0) {
-        const hi    = Math.round(d.temperature_2m_max[0]);
-        const lo    = Math.round(d.temperature_2m_min[0]);
-        const code  = d.weathercode[0];
-        const rain  = d.precipitation_sum[0];
-        const wmo   = WMO[code] || {d:'Variable', emoji:'🌤️'};
-        anyForecast = true;
+        const hi   = Math.round(d.temperature_2m_max[0]);
+        const lo   = Math.round(d.temperature_2m_min[0]);
+        const code = d.weathercode[0];
+        const rain = d.precipitation_sum[0];
+        const wmo  = WMO[code] || {d:'Variable', emoji:'🌤️'};
         card.innerHTML = `
           <div class="w-date">${stop.label}</div>
           <div class="w-port">${stop.emoji} ${stop.port}</div>
@@ -1361,12 +1554,16 @@ function renderDreams() {
     }
 
     dreams.forEach(d => {
+      const linkedDream = d.linked_dream_id ? allDreams.find(x => x.id === d.linked_dream_id) : null;
       html += `<div class="dream-row">
         <span class="dream-star">⭐</span>
         <div class="dream-body">
           <div class="dream-txt">${d.dream}</div>
           ${d.assigned_day ? `<div class="dream-day">📅 ${d.assigned_day}</div>` : ''}
           ${d.notes ? `<div class="dream-note">${d.notes}</div>` : ''}
+          ${linkedDream
+            ? `<button class="dream-linked" onclick="unlinkDream('${d.id}')">🔗 Linked with ${linkedDream.person} · tap to unlink</button>`
+            : `<button class="dream-link-btn" onclick="openLinkModal('${d.id}')">🔗 Link with someone</button>`}
         </div>
         <button onclick="delDream('${d.id}')" class="del-btn">×</button>
       </div>`;
@@ -1384,36 +1581,71 @@ function renderDreams() {
   }
 
   grid.innerHTML = html;
+  renderDreamsCalendar();
+}
 
-  // All-dreams summary
-  const scheduled = allDreams.filter(d => d.assigned_day);
-  const unscheduled = allDreams.filter(d => !d.assigned_day);
-  if (allDreams.length > 0) {
-    document.getElementById('all-dreams-section').style.display = 'block';
-    let sumHtml = '';
-    if (scheduled.length) {
-      sumHtml += `<p style="font-weight:700;color:var(--navy);margin-bottom:8px">📅 Scheduled Dreams</p>`;
-      scheduled.forEach(d => {
-        const cfg = FAMILIES[d.family];
-        sumHtml += `<div class="card" style="border-left:4px solid ${cfg.bg};margin-bottom:8px;padding:12px 16px">
-          <span style="font-weight:700;color:${cfg.bg}">${d.person}</span> · ${d.dream}
-          <div style="font-size:13px;color:var(--teal);font-weight:700;margin-top:4px">📅 ${d.assigned_day}</div>
-        </div>`;
-      });
+function renderDreamsCalendar() {
+  const calSection = document.getElementById('dream-calendar-section');
+  const calEl = document.getElementById('dream-calendar');
+
+  if (!allDreams.length) { calSection.style.display = 'none'; return; }
+  calSection.style.display = 'block';
+
+  let html = '';
+  for (const stop of ITINERARY) {
+    const dayNum = parseInt(stop.date.slice(8));
+    const dayDreams = allDreams.filter(d =>
+      d.assigned_day && d.assigned_day.startsWith(`June ${dayNum}`)
+    );
+
+    // Group linked pairs so they appear together
+    const shown = new Set();
+    const dreamItems = [];
+    for (const d of dayDreams) {
+      if (shown.has(d.id)) continue;
+      shown.add(d.id);
+      if (d.linked_dream_id) {
+        const partner = dayDreams.find(x => x.id === d.linked_dream_id);
+        if (partner && !shown.has(partner.id)) {
+          shown.add(partner.id);
+          const c1 = FAMILIES[d.family]?.bg || '#888';
+          const c2 = FAMILIES[partner.family]?.bg || '#888';
+          dreamItems.push(`<div class="dcal-dream">
+            <span class="dcal-who" style="color:${c1}">${d.person}</span>
+            <span class="dcal-who" style="color:${c2}">${partner.person}</span>
+            <span>🔗 ${d.dream}</span>
+          </div>`);
+          continue;
+        }
+      }
+      const col = FAMILIES[d.family]?.bg || '#888';
+      dreamItems.push(`<div class="dcal-dream">
+        <span class="dcal-who" style="color:${col}">${d.person}</span>
+        <span>${d.dream}</span>
+      </div>`);
     }
-    if (unscheduled.length) {
-      sumHtml += `<p style="font-weight:700;color:var(--navy);margin:16px 0 8px">🕐 Not Yet Scheduled</p>`;
-      unscheduled.forEach(d => {
-        const cfg = FAMILIES[d.family];
-        sumHtml += `<div class="card" style="border-left:4px solid ${cfg.bg};margin-bottom:8px;padding:12px 16px">
-          <span style="font-weight:700;color:${cfg.bg}">${d.person}</span> · ${d.dream}
-        </div>`;
-      });
-    }
-    document.getElementById('all-dreams-list').innerHTML = sumHtml;
-  } else {
-    document.getElementById('all-dreams-section').style.display = 'none';
+
+    html += `<div class="dcal-card ${stop.sea?'sea':''}">
+      <div class="dcal-date">${stop.label}</div>
+      <div class="dcal-port">${stop.emoji} ${stop.port}</div>
+      ${dreamItems.length ? dreamItems.join('') : '<div class="dcal-empty">Nothing scheduled</div>'}
+    </div>`;
   }
+
+  // Unscheduled dreams
+  const unscheduled = allDreams.filter(d => !d.assigned_day);
+  if (unscheduled.length) {
+    html += `<div class="dcal-card" style="border:2px dashed var(--border);box-shadow:none">
+      <div class="dcal-date">UNSCHEDULED</div>
+      <div class="dcal-port" style="font-size:14px;margin-bottom:6px">Not yet assigned to a day</div>
+      ${unscheduled.map(d => {
+        const col = FAMILIES[d.family]?.bg || '#888';
+        return `<div class="dcal-dream"><span class="dcal-who" style="color:${col}">${d.person}</span><span>${d.dream}</span></div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  calEl.innerHTML = html;
 }
 
 function openDreamModal(person, family) {
@@ -1444,19 +1676,63 @@ async function saveDream() {
 
 async function delDream(id) {
   if (!confirm('Remove this dream?')) return;
+  // Unlink any dream pointing to this one
+  await sb.from('vacation_dreams').update({ linked_dream_id: null }).eq('linked_dream_id', id);
   await sb.from('vacation_dreams').delete().eq('id', id);
   toast('Dream removed');
   loadDreams();
 }
 
+function openLinkModal(dreamId) {
+  const currentDream = allDreams.find(d => d.id === dreamId);
+  if (!currentDream) return;
+  const candidates = allDreams.filter(d =>
+    d.id !== dreamId &&
+    d.person !== currentDream.person &&
+    !d.linked_dream_id
+  );
+  if (!candidates.length) {
+    toast('No other unlinked dreams to connect with yet!', 'err');
+    return;
+  }
+  document.getElementById('link-from-id').value = dreamId;
+  const sel = document.getElementById('link-to-dream');
+  sel.innerHTML = candidates.map(d =>
+    `<option value="${d.id}">${d.person}: ${d.dream.length > 55 ? d.dream.slice(0,55)+'…' : d.dream}</option>`
+  ).join('');
+  openModal('m-link');
+}
+
+async function saveDreamLink() {
+  const fromId = document.getElementById('link-from-id').value;
+  const toId   = document.getElementById('link-to-dream').value;
+  await sb.from('vacation_dreams').update({ linked_dream_id: toId }).eq('id', fromId);
+  await sb.from('vacation_dreams').update({ linked_dream_id: fromId }).eq('id', toId);
+  toast('Dreams linked! 🔗');
+  closeModal('m-link');
+  loadDreams();
+}
+
+async function unlinkDream(dreamId) {
+  const d = allDreams.find(x => x.id === dreamId);
+  if (!d) return;
+  if (!confirm('Unlink this dream?')) return;
+  if (d.linked_dream_id) {
+    await sb.from('vacation_dreams').update({ linked_dream_id: null }).eq('id', d.linked_dream_id);
+  }
+  await sb.from('vacation_dreams').update({ linked_dream_id: null }).eq('id', dreamId);
+  toast('Dreams unlinked');
+  loadDreams();
+}
+
 // ══════════════════════════════════════════
-// TO-DO TAB
+// TO-DO TAB — BUCKET MODEL
 // ══════════════════════════════════════════
 function openTodoModal() {
-  document.getElementById('t-title').value = '';
-  document.getElementById('t-desc').value  = '';
-  document.getElementById('t-due').value   = '';
-  document.getElementById('t-pri').value   = 'medium';
+  document.getElementById('t-title').value  = '';
+  document.getElementById('t-desc').value   = '';
+  document.getElementById('t-due').value    = '';
+  document.getElementById('t-bucket').value = 'do_now';
   document.getElementById('t-assign').value = '';
   openModal('m-todo');
 }
@@ -1467,52 +1743,91 @@ async function loadTodos() {
   renderTodos();
 }
 
-function filterTodos(f) {
-  curFilter = f;
-  document.querySelectorAll('[id^="f-"]').forEach(b => {
-    b.style.background = '';
-    b.style.color = '';
-    b.classList.remove('active-filter');
-  });
-  const btn = document.getElementById('f-' + f);
-  if (btn) { btn.style.background='var(--navy)'; btn.style.color='white'; }
-  renderTodos();
+function renderTodoItem(t) {
+  const barColor = { do_now:'var(--terra)', waiting_concierge:'var(--mustard)', waiting_itinerary:'var(--teal)' }[t.action_group] || 'var(--border)';
+  const dueStr = t.due_date ? `📅 Due ${new Date(t.due_date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}` : '';
+  return `<div class="todo-item" id="td-${t.id}">
+    <div class="t-bar" style="background:${barColor}"></div>
+    <div class="t-body">
+      <div class="t-title">${t.title}</div>
+      <div class="t-meta">
+        ${t.assigned_to ? `<span>👤 ${t.assigned_to}</span>` : ''}
+        ${dueStr ? `<span>${dueStr}</span>` : ''}
+      </div>
+      ${t.description ? `<div class="t-desc">${t.description}</div>` : ''}
+    </div>
+    <div class="t-actions">
+      <button class="btn btn-teal btn-sm" onclick="markTodoDone('${t.id}')">✅ Done</button>
+      <select class="bucket-mover" onchange="moveBucket('${t.id}',this.value)" title="Move to bucket">
+        <option value="do_now"             ${t.action_group==='do_now'?'selected':''}>🟢 Do Now</option>
+        <option value="waiting_concierge"  ${t.action_group==='waiting_concierge'?'selected':''}>⏳ Concierge</option>
+        <option value="waiting_itinerary"  ${t.action_group==='waiting_itinerary'?'selected':''}>📋 Itinerary</option>
+      </select>
+      <button class="del-btn" onclick="delTodo('${t.id}')">🗑️</button>
+    </div>
+  </div>`;
+}
+
+function renderTodoDone(t) {
+  return `<div class="todo-item t-done" id="td-${t.id}">
+    <div class="t-bar" style="background:var(--success)"></div>
+    <div class="t-body">
+      <div class="t-title">${t.title}</div>
+      ${t.assigned_to ? `<div class="t-meta">👤 ${t.assigned_to}</div>` : ''}
+    </div>
+    <div class="t-actions">
+      <button class="btn btn-ghost btn-sm" onclick="restoreTodo('${t.id}')">↩️ Restore</button>
+      <button class="del-btn" onclick="delTodo('${t.id}')">🗑️</button>
+    </div>
+  </div>`;
 }
 
 function renderTodos() {
   const el = document.getElementById('todos-list');
-  const PORD = { high:0, medium:1, low:2 };
-  const SL   = { pending:'To Do', in_progress:'In Progress', done:'Done ✅' };
-  const SN   = { pending:'in_progress', in_progress:'done', done:'pending' };
+  const active = allTodos.filter(t => t.status !== 'done');
+  const done   = allTodos.filter(t => t.status === 'done');
 
-  let list = [...allTodos];
-  if (curFilter==='high')    list = list.filter(t => t.priority==='high');
-  if (curFilter==='pending') list = list.filter(t => t.status!=='done');
-  if (curFilter==='done')    list = list.filter(t => t.status==='done');
-  list.sort((a,b) => (PORD[a.priority]-PORD[b.priority]) || new Date(a.created_at)-new Date(b.created_at));
+  const buckets = [
+    { key:'do_now',            label:'🟢 Do Now',                   cls:'bucket-do',   sub:'Tasks you can act on right now' },
+    { key:'waiting_concierge', label:'⏳ Waiting on Concierge Email', cls:'bucket-wait', sub:'Blocked until the suite welcome email arrives' },
+    { key:'waiting_itinerary', label:'📋 Waiting on Full RC Itinerary', cls:'bucket-itin', sub:'Needs the complete Royal Caribbean schedule' },
+  ];
 
-  if (!list.length) {
-    el.innerHTML = `<div class="empty-state"><div class="empty-icon">✅</div><p>Nothing here — add a task above!</p></div>`;
+  let html = '';
+  for (const b of buckets) {
+    const items = active.filter(t => t.action_group === b.key);
+    html += `<div class="bucket-section">
+      <div class="bucket-hd ${b.cls}">
+        <div>
+          <div>${b.label}</div>
+          <div style="font-size:13px;font-weight:500;opacity:0.75;margin-top:2px">${b.sub}</div>
+        </div>
+        <span class="bucket-count">${items.length}</span>
+      </div>`;
+    if (!items.length) {
+      html += `<p style="color:var(--text-light);font-style:italic;padding:4px 0 12px;font-size:16px">All clear! Nothing here.</p>`;
+    } else {
+      html += items.map(renderTodoItem).join('');
+    }
+    html += `</div>`;
+  }
+
+  if (done.length) {
+    html += `<details>
+      <summary class="bucket-hd bucket-done" style="cursor:pointer">
+        <div>✅ Done <span style="font-size:13px;font-weight:500;opacity:0.75"> — ${done.length} completed task${done.length===1?'':''}</span></div>
+        <span class="bucket-count">${done.length}</span>
+      </summary>
+      <div style="margin-top:8px">${done.map(renderTodoDone).join('')}</div>
+    </details>`;
+  }
+
+  if (!allTodos.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">✅</div><p>No tasks yet — add one above!</p></div>`;
     return;
   }
 
-  el.innerHTML = list.map(t => `
-    <div class="todo-item p${t.priority[0]} ${t.status==='done'?'t-done':''}" id="td-${t.id}">
-      <div class="t-bar"></div>
-      <div class="t-body">
-        <div class="t-title">${t.title}</div>
-        <div class="t-meta">
-          ${t.assigned_to?`<span>👤 ${t.assigned_to}</span>`:''}
-          ${t.due_date?`<span>📅 Due ${new Date(t.due_date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>`:''}
-          <span class="badge badge-${t.priority}">${t.priority.charAt(0).toUpperCase()+t.priority.slice(1)}</span>
-        </div>
-        ${t.description?`<div class="t-desc">${t.description}</div>`:''}
-      </div>
-      <div class="t-actions">
-        <button class="status-btn s-${t.status}" onclick="cycleTodo('${t.id}','${SN[t.status]}')">${SL[t.status]}</button>
-        <button class="del-btn" onclick="delTodo('${t.id}')">🗑️</button>
-      </div>
-    </div>`).join('');
+  el.innerHTML = html;
 }
 
 async function saveTodo() {
@@ -1520,11 +1835,12 @@ async function saveTodo() {
   if (!title) { toast('Please enter a task title','err'); return; }
   const { error } = await sb.from('vacation_todos').insert({
     title,
-    description: document.getElementById('t-desc').value,
-    priority:    document.getElementById('t-pri').value,
-    assigned_to: document.getElementById('t-assign').value,
-    due_date:    document.getElementById('t-due').value || null,
-    status:      'pending',
+    description:  document.getElementById('t-desc').value,
+    action_group: document.getElementById('t-bucket').value,
+    priority:     document.getElementById('t-bucket').value === 'do_now' ? 'high' : 'medium',
+    assigned_to:  document.getElementById('t-assign').value,
+    due_date:     document.getElementById('t-due').value || null,
+    status:       'pending',
   });
   if (error) { toast('Error saving task','err'); return; }
   toast('Task added! ✅');
@@ -1532,8 +1848,18 @@ async function saveTodo() {
   loadTodos();
 }
 
-async function cycleTodo(id, next) {
-  await sb.from('vacation_todos').update({ status:next }).eq('id', id);
+async function markTodoDone(id) {
+  await sb.from('vacation_todos').update({ status:'done' }).eq('id', id);
+  loadTodos();
+}
+
+async function restoreTodo(id) {
+  await sb.from('vacation_todos').update({ status:'pending' }).eq('id', id);
+  loadTodos();
+}
+
+async function moveBucket(id, bucket) {
+  await sb.from('vacation_todos').update({ action_group: bucket }).eq('id', id);
   loadTodos();
 }
 
@@ -1544,25 +1870,14 @@ async function delTodo(id) {
   loadTodos();
 }
 
-// ── FIX CSS class names for priority bars ──
-// ph/pm/pl map to p + first letter
-document.querySelectorAll('.todo-item').forEach(() => {});
-// Override via dynamic classes
-const styleEl = document.createElement('style');
-styleEl.textContent = `
-  .todo-item.ph .t-bar { background: var(--terra); }
-  .todo-item.pm .t-bar { background: var(--mustard); }
-  .todo-item.pl .t-bar { background: var(--success); }
-`;
-document.head.appendChild(styleEl);
-
 // ── INIT ──
 (async function init() {
   updateCountdown();
   setInterval(updateCountdown, 60000);
-  await Promise.all([loadFlights(), loadPacking('Swanson'), loadDreams(), loadTodos()]);
+  renderBanner();
+  bannerTimer = setInterval(nextBanner, 5500);
+  await Promise.all([loadFlights(), loadPacking('Swanson'), loadDreams(), loadTodos(), loadTransit()]);
   loadWeather();
-  filterTodos('all');
 })();
 </script>
 </body>
