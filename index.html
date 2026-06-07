@@ -423,6 +423,60 @@
       to   { transform: translateX(0);   opacity: 1; }
     }
 
+    /* ── ALERT BANNER ── */
+    .alert-banner {
+      background: #FFF3CD;
+      border: 2px solid #E8A020;
+      border-left: 6px solid #D94F2B;
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 20px;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    .alert-banner strong { color: var(--terra); font-size: 17px; }
+    .alert-banner a { color: var(--teal); font-weight: 700; }
+    .alert-required {
+      background: var(--terra-light);
+      border: 2px solid var(--terra);
+      border-left: 6px solid var(--terra);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 20px;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    .alert-required strong { color: var(--terra); }
+
+    /* ── POLICY CARDS ── */
+    .policy-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 16px; }
+    .policy-card {
+      background: white;
+      border-radius: var(--radius-sm);
+      border-left: 4px solid var(--border);
+      padding: 14px 16px;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    .policy-card .pc-icon { font-size: 22px; margin-bottom: 6px; display: block; }
+    .policy-card strong { color: var(--navy); font-size: 15px; display: block; margin-bottom: 4px; }
+
+    /* ── FLIGHT STATUS ── */
+    .status-result {
+      margin-top: 10px;
+      padding: 14px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      line-height: 1.6;
+      border: 2px solid var(--border);
+      background: var(--cream);
+    }
+    .status-ontime   { border-color: #2A7A48; background: #E0F5E8; }
+    .status-delayed  { border-color: #E8A020; background: #FFF5D0; }
+    .status-landed   { border-color: var(--teal); background: var(--teal-light); }
+    .status-cancelled{ border-color: var(--terra); background: var(--terra-light); }
+    .status-label { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+
     /* ── UTILS ── */
     .empty-state { text-align: center; padding: 48px 20px; color: var(--text-light); }
     .empty-icon  { font-size: 52px; margin-bottom: 12px; }
@@ -489,6 +543,13 @@
       </div>
     </div>
 
+    <!-- Consent form alert -->
+    <div class="alert-required">
+      🚨 <strong>ACTION REQUIRED — Children's Consent Form</strong><br>
+      Royal Caribbean flagged PJ's booking for traveling with children. <strong>Any adult who is not the parent or legal guardian of a child must bring a notarized consent form to the pier.</strong> Children with different last names than the traveling adult also need a birth certificate. Missing this = denied boarding, no refund.<br>
+      <a href="https://www.royalcaribbean.com/plan-a-cruise/travel-documents" target="_blank" style="color:var(--terra);font-weight:700">→ Get the form at RoyalCaribbean.com</a>
+    </div>
+
     <div class="page-top">
       <div>
         <div class="section-title">✈️ Flights</div>
@@ -498,12 +559,64 @@
     </div>
 
     <div id="flights-list"><div class="loading">⏳ Loading…</div></div>
+
+    <!-- Cruise Reminders -->
+    <div style="margin-top:32px">
+      <div class="section-title" style="font-size:20px;margin-bottom:4px">📋 Cruise Reminders</div>
+      <div class="section-sub">Policies that apply to the Allure of the Seas sailing.</div>
+      <div class="policy-grid">
+        <div class="policy-card" style="border-left-color:var(--terra)">
+          <span class="pc-icon">🥂</span>
+          <strong>Alcohol Policy</strong>
+          Each adult may bring <em>one 750ml bottle of wine or champagne</em> on boarding day via carry-on. No boxed wine. All other purchased bottles stored until final day.
+        </div>
+        <div class="policy-card" style="border-left-color:var(--mustard)">
+          <span class="pc-icon">💵</span>
+          <strong>Gratuities</strong>
+          $18.50/person/day auto-charged to SeaPass. Suite guests: $21/day. Beverages add 18%, spa adds 20% automatically.
+        </div>
+        <div class="policy-card" style="border-left-color:var(--teal)">
+          <span class="pc-icon">🧴</span>
+          <strong>Reef-Safe Sunscreen Required</strong>
+          Jamaica & Bahamas ban oxybenzone, octinoxate, octocrylene & titanium dioxide. Buy reef-safe before you go — hard to find at ports.
+        </div>
+        <div class="policy-card" style="border-left-color:var(--purple)">
+          <span class="pc-icon">📱</span>
+          <strong>Online Check-In</strong>
+          Complete at RoyalCaribbean.com by <strong>June 18</strong> (3 days before sailing). Print SetSail passes and bring them to the pier.
+        </div>
+        <div class="policy-card" style="border-left-color:var(--navy)">
+          <span class="pc-icon">🚁</span>
+          <strong>No Drones on Ship</strong>
+          Drones allowed on land only, outside port areas. Not permitted onboard ship or at CocoCay. Violations = confiscation.
+        </div>
+        <div class="policy-card" style="border-left-color:#E8A020">
+          <span class="pc-icon">🧳</span>
+          <strong>Overnight Bag</strong>
+          Pack a separate bag for the last night (June 27). Checked luggage is collected that evening and you won't have it until disembarkation.
+        </div>
+        <div class="policy-card" style="border-left-color:var(--success)">
+          <span class="pc-icon">💊</span>
+          <strong>Medications in Carry-On</strong>
+          Keep all medications in carry-on, in original labeled containers. Pack 3 extra days in case of itinerary changes.
+        </div>
+        <div class="policy-card" style="border-left-color:var(--terra)">
+          <span class="pc-icon">🛟</span>
+          <strong>Muster Drill — Mandatory</strong>
+          Safety briefing required for all guests on June 21. Complete via Royal Caribbean app (eMuster) before leaving port.
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ── PACKING TAB ── -->
   <div class="tab-panel" id="panel-packing">
     <div class="section-title">🧳 Packing Lists</div>
     <div class="section-sub">Check off items as you pack. Each family has their own list.</div>
+    <div class="alert-banner">
+      🌊 <strong>Reef-Safe Sunscreen Required in Jamaica & Bahamas</strong><br>
+      Avoid sunscreens with oxybenzone, octinoxate, octocrylene, or titanium dioxide — these are banned and harm coral reefs. Look for mineral sunscreens with non-nano zinc oxide. Buy before you travel; options are limited at port.
+    </div>
 
     <div class="family-tabs">
       <button class="family-tab fs" data-family="Swanson"  onclick="selectFamily('Swanson')">🏄 Swansons</button>
@@ -589,24 +702,76 @@
         <input type="text" id="f-num" placeholder="e.g. DL 442">
       </div>
     </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Departs From</label>
-        <input type="text" id="f-from" placeholder="e.g. Boston">
+    <div style="background:var(--sand);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:14px">
+      <div style="font-weight:700;color:var(--navy);font-size:15px;margin-bottom:12px">🛫 Departure</div>
+      <div class="form-row">
+        <div class="form-group" style="flex:2;min-width:130px">
+          <label>City</label>
+          <input type="text" id="f-from" placeholder="e.g. Boston">
+        </div>
+        <div class="form-group" style="flex:2;min-width:140px">
+          <label>Date</label>
+          <input type="date" id="f-dep-date">
+        </div>
       </div>
       <div class="form-group">
-        <label>Departure Time</label>
-        <input type="datetime-local" id="f-dep">
+        <label>Time <span style="font-weight:400;color:var(--text-light);font-size:14px">(leave blank if unknown)</span></label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select id="f-dep-hr" style="flex:1">
+            <option value="">--</option>
+            <option>1</option><option>2</option><option>3</option><option>4</option>
+            <option>5</option><option>6</option><option>7</option><option>8</option>
+            <option>9</option><option>10</option><option>11</option><option>12</option>
+          </select>
+          <span style="font-size:22px;font-weight:700;color:var(--navy)">:</span>
+          <select id="f-dep-min" style="flex:1">
+            <option value="00">00</option><option value="05">05</option>
+            <option value="10">10</option><option value="15">15</option>
+            <option value="20">20</option><option value="25">25</option>
+            <option value="30">30</option><option value="35">35</option>
+            <option value="40">40</option><option value="45">45</option>
+            <option value="50">50</option><option value="55">55</option>
+          </select>
+          <select id="f-dep-ampm" style="flex:1">
+            <option>AM</option><option>PM</option>
+          </select>
+        </div>
       </div>
     </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Arrives In</label>
-        <input type="text" id="f-to" placeholder="e.g. Fort Lauderdale">
+    <div style="background:var(--sand);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:14px">
+      <div style="font-weight:700;color:var(--navy);font-size:15px;margin-bottom:12px">🛬 Arrival</div>
+      <div class="form-row">
+        <div class="form-group" style="flex:2;min-width:130px">
+          <label>City</label>
+          <input type="text" id="f-to" placeholder="e.g. Fort Lauderdale">
+        </div>
+        <div class="form-group" style="flex:2;min-width:140px">
+          <label>Date</label>
+          <input type="date" id="f-arr-date">
+        </div>
       </div>
       <div class="form-group">
-        <label>Arrival Time</label>
-        <input type="datetime-local" id="f-arr">
+        <label>Time <span style="font-weight:400;color:var(--text-light);font-size:14px">(leave blank if unknown)</span></label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select id="f-arr-hr" style="flex:1">
+            <option value="">--</option>
+            <option>1</option><option>2</option><option>3</option><option>4</option>
+            <option>5</option><option>6</option><option>7</option><option>8</option>
+            <option>9</option><option>10</option><option>11</option><option>12</option>
+          </select>
+          <span style="font-size:22px;font-weight:700;color:var(--navy)">:</span>
+          <select id="f-arr-min" style="flex:1">
+            <option value="00">00</option><option value="05">05</option>
+            <option value="10">10</option><option value="15">15</option>
+            <option value="20">20</option><option value="25">25</option>
+            <option value="30">30</option><option value="35">35</option>
+            <option value="40">40</option><option value="45">45</option>
+            <option value="50">50</option><option value="55">55</option>
+          </select>
+          <select id="f-arr-ampm" style="flex:1">
+            <option>AM</option><option selected>PM</option>
+          </select>
+        </div>
       </div>
     </div>
     <div class="form-group">
@@ -831,7 +996,28 @@ document.querySelectorAll('.modal-bg').forEach(bg => {
 // ══════════════════════════════════════════
 // TRAVEL TAB
 // ══════════════════════════════════════════
-function openFlightModal() { openModal('m-flight'); }
+function openFlightModal() {
+  // Reset time selectors to blank/defaults
+  ['f-dep-hr','f-arr-hr'].forEach(id => document.getElementById(id).value = '');
+  ['f-dep-min','f-arr-min'].forEach(id => document.getElementById(id).value = '00');
+  ['f-dep-ampm'].forEach(id => document.getElementById(id).value = 'AM');
+  document.getElementById('f-arr-ampm').value = 'PM';
+  document.getElementById('f-dep-date').value = '';
+  document.getElementById('f-arr-date').value = '';
+  openModal('m-flight');
+}
+
+function buildDatetime(dateId, hrId, minId, ampmId) {
+  const date = document.getElementById(dateId).value;
+  const hr   = document.getElementById(hrId).value;
+  const min  = document.getElementById(minId).value;
+  const ampm = document.getElementById(ampmId).value;
+  if (!date || !hr) return null;
+  let h = parseInt(hr);
+  if (ampm === 'AM' && h === 12) h = 0;
+  if (ampm === 'PM' && h !== 12) h += 12;
+  return `${date}T${String(h).padStart(2,'0')}:${min}:00`;
+}
 
 async function loadFlights() {
   const { data } = await sb.from('vacation_flights').select('*').order('direction').order('created_at');
@@ -873,7 +1059,11 @@ function renderFlights() {
           ${f.arrival_time?' → '+fmt(f.arrival_time):''}
           ${f.notes?'<br>📝 '+f.notes:''}
         </div>
-        <button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="delFlight('${f.id}')">🗑️ Remove</button>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+          ${f.flight_number ? `<button class="btn btn-teal btn-sm" onclick="checkFlightStatus('${f.id}','${f.flight_number.replace(/'/g,"\\'")}')">📡 Check Status</button>` : ''}
+          <button class="btn btn-ghost btn-sm" onclick="delFlight('${f.id}')">🗑️ Remove</button>
+        </div>
+        <div id="fstatus-${f.id}" style="display:none"></div>
       </div>`;
     }
     html += '</div>';
@@ -888,16 +1078,16 @@ async function saveFlight() {
     airline:         document.getElementById('f-airline').value,
     flight_number:   document.getElementById('f-num').value,
     departure_city:  document.getElementById('f-from').value,
-    departure_time:  document.getElementById('f-dep').value || null,
+    departure_time:  buildDatetime('f-dep-date','f-dep-hr','f-dep-min','f-dep-ampm'),
     arrival_city:    document.getElementById('f-to').value,
-    arrival_time:    document.getElementById('f-arr').value || null,
+    arrival_time:    buildDatetime('f-arr-date','f-arr-hr','f-arr-min','f-arr-ampm'),
     notes:           document.getElementById('f-notes').value,
   };
   const { error } = await sb.from('vacation_flights').insert(payload);
   if (error) { toast('Error saving flight','err'); return; }
   toast('Flight added! ✈️');
   closeModal('m-flight');
-  document.querySelectorAll('#m-flight input').forEach(i => i.value='');
+  document.querySelectorAll('#m-flight input[type=text]').forEach(i => i.value='');
   loadFlights();
 }
 
@@ -906,6 +1096,65 @@ async function delFlight(id) {
   await sb.from('vacation_flights').delete().eq('id', id);
   toast('Flight removed');
   loadFlights();
+}
+
+async function checkFlightStatus(flightId, flightNumber) {
+  const el = document.getElementById(`fstatus-${flightId}`);
+  el.style.display = 'block';
+  el.innerHTML = `<div class="status-result">📡 Checking status for ${flightNumber}…</div>`;
+
+  try {
+    const res = await fetch('https://viudclgcdsskzlfosflg.supabase.co/functions/v1/aviation-proxy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ flightNumber }),
+    });
+    const data = await res.json();
+
+    if (!data.found) {
+      el.innerHTML = `<div class="status-result">📅 No live data yet for <strong>${flightNumber}</strong>. Flight status becomes available closer to departure day.</div>`;
+      return;
+    }
+
+    const statusEmoji = {
+      active: '🛫', scheduled: '📅', landed: '🛬', cancelled: '❌',
+      incident: '⚠️', diverted: '↩️',
+    };
+    const statusClass = {
+      active: 'status-ontime', scheduled: 'status-ontime', landed: 'status-landed',
+      cancelled: 'status-cancelled', incident: 'status-delayed', diverted: 'status-delayed',
+    };
+    const s = data.status || 'unknown';
+    const emoji = statusEmoji[s] || '✈️';
+    const cls = statusClass[s] || '';
+
+    const fmtTime = t => t ? new Date(t).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '—';
+    const dep = data.departure, arr = data.arrival;
+    const delayNote = dep.delay ? `<span style="color:var(--terra);font-weight:700"> · ${dep.delay} min delay</span>` : '';
+
+    el.innerHTML = `<div class="status-result ${cls}">
+      <div class="status-label">${emoji} ${data.flightNumber} — ${s.charAt(0).toUpperCase()+s.slice(1)}${delayNote}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:14px">
+        <div>
+          <strong>Departure</strong><br>
+          ${dep.airport||'—'} (${dep.iata||'—'})<br>
+          Scheduled: ${fmtTime(dep.scheduled)}<br>
+          ${dep.actual?'Actual: '+fmtTime(dep.actual)+'<br>':''}
+          ${dep.terminal?'Terminal '+dep.terminal:''}${dep.gate?' Gate '+dep.gate:''}
+        </div>
+        <div>
+          <strong>Arrival</strong><br>
+          ${arr.airport||'—'} (${arr.iata||'—'})<br>
+          Scheduled: ${fmtTime(arr.scheduled)}<br>
+          ${arr.actual?'Actual: '+fmtTime(arr.actual)+'<br>':''}
+          ${arr.estimated&&!arr.actual?'Estimated: '+fmtTime(arr.estimated)+'<br>':''}
+          ${arr.terminal?'Terminal '+arr.terminal:''}${arr.gate?' Gate '+arr.gate:''}
+        </div>
+      </div>
+    </div>`;
+  } catch(e) {
+    el.innerHTML = `<div class="status-result">⚠️ Could not reach flight status service. Please try again.</div>`;
+  }
 }
 
 // ══════════════════════════════════════════
