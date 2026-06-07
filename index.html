@@ -743,6 +743,16 @@
         </div>
       </div>
       <div class="form-group">
+        <label>Timezone</label>
+        <select id="f-dep-tz">
+          <option value="-240|EDT">EDT — Eastern (Fort Lauderdale, Boston, NYC, Nassau)</option>
+          <option value="-300|CDT">CDT — Central</option>
+          <option value="-300|JAM">JAM — Jamaica (UTC−5, no DST)</option>
+          <option value="-360|MDT">MDT — Mountain</option>
+          <option value="-420|PDT">PDT — Pacific</option>
+        </select>
+      </div>
+      <div class="form-group">
         <label>Time <span style="font-weight:400;color:var(--text-light);font-size:14px">(leave blank if unknown)</span></label>
         <div style="display:flex;gap:8px;align-items:center">
           <select id="f-dep-hr" style="flex:1">
@@ -777,6 +787,16 @@
           <label>Date</label>
           <input type="date" id="f-arr-date">
         </div>
+      </div>
+      <div class="form-group">
+        <label>Timezone</label>
+        <select id="f-arr-tz">
+          <option value="-240|EDT">EDT — Eastern (Fort Lauderdale, Boston, NYC, Nassau)</option>
+          <option value="-300|CDT">CDT — Central</option>
+          <option value="-300|JAM">JAM — Jamaica (UTC−5, no DST)</option>
+          <option value="-360|MDT">MDT — Mountain</option>
+          <option value="-420|PDT">PDT — Pacific</option>
+        </select>
       </div>
       <div class="form-group">
         <label>Time <span style="font-weight:400;color:var(--text-light);font-size:14px">(leave blank if unknown)</span></label>
@@ -1143,19 +1163,55 @@ function openFlightModal() {
   document.getElementById('f-arr-ampm').value = 'PM';
   document.getElementById('f-dep-date').value = '';
   document.getElementById('f-arr-date').value = '';
+  document.getElementById('f-dep-tz').value = '-240|EDT';
+  document.getElementById('f-arr-tz').value = '-240|EDT';
   openModal('m-flight');
 }
 
-function buildDatetime(dateId, hrId, minId, ampmId) {
+function buildDatetime(dateId, hrId, minId, ampmId, tzId) {
   const date = document.getElementById(dateId).value;
   const hr   = document.getElementById(hrId).value;
   const min  = document.getElementById(minId).value;
   const ampm = document.getElementById(ampmId).value;
-  if (!date || !hr) return null;
+  const tzRaw = tzId ? (document.getElementById(tzId)?.value || '-240|EDT') : '-240|EDT';
+  if (!date || !hr) return { dt: null, tz: tzRaw };
   let h = parseInt(hr);
   if (ampm === 'AM' && h === 12) h = 0;
   if (ampm === 'PM' && h !== 12) h += 12;
-  return `${date}T${String(h).padStart(2,'0')}:${min}:00`;
+  // Build ISO string with UTC offset so Supabase stores the correct UTC moment
+  const offsetMins  = parseInt(tzRaw.split('|')[0]);
+  const sign        = offsetMins <= 0 ? '-' : '+';
+  const absH        = String(Math.floor(Math.abs(offsetMins) / 60)).padStart(2, '0');
+  const absM        = String(Math.abs(offsetMins) % 60).padStart(2, '0');
+  const tzSuffix    = `${sign}${absH}:${absM}`;
+  return { dt: `${date}T${String(h).padStart(2,'0')}:${min}:00${tzSuffix}`, tz: tzRaw };
+}
+
+// Display a flight time correctly using the stored timezone offset
+function fmtFlight(dt, tzRaw) {
+  if (!dt) return '';
+  if (!tzRaw) {
+    // Legacy: no tz stored — show as-is from the ISO string to avoid browser conversion
+    const m = dt.match(/T(\d{2}):(\d{2})/);
+    if (!m) return '';
+    const h24 = parseInt(m[1]), min = m[2];
+    const ampm = h24 >= 12 ? 'PM' : 'AM';
+    const h12  = h24 % 12 || 12;
+    const d = new Date(dt.slice(0,10) + 'T12:00:00Z');
+    return `${d.toLocaleDateString('en-US',{month:'short',day:'numeric'})} ${h12}:${min} ${ampm}`;
+  }
+  const [offsetStr, label] = tzRaw.split('|');
+  const offsetMins = parseInt(offsetStr);
+  // Convert stored UTC back to the original local time
+  const utcMs   = new Date(dt).getTime();
+  const localMs = utcMs + offsetMins * 60 * 1000;
+  const ld      = new Date(localMs);
+  const months  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const h24  = ld.getUTCHours();
+  const min  = String(ld.getUTCMinutes()).padStart(2,'0');
+  const ampm = h24 >= 12 ? 'PM' : 'AM';
+  const h12  = h24 % 12 || 12;
+  return `${months[ld.getUTCMonth()]} ${ld.getUTCDate()}, ${h12}:${min} ${ampm} ${label}`;
 }
 
 async function loadFlights() {
@@ -1196,8 +1252,8 @@ function renderFlights() {
         </div>
         <div class="f-detail">
           ${f.airline||''}${f.flight_number?' · '+f.flight_number:''}
-          ${f.departure_time?' · '+fmt(f.departure_time):''}
-          ${f.arrival_time?' → '+fmt(f.arrival_time):''}
+          ${f.departure_time?' · '+fmtFlight(f.departure_time, f.departure_tz):''}
+          ${f.arrival_time?' → '+fmtFlight(f.arrival_time, f.arrival_tz):''}
           ${f.notes?'<br>📝 '+f.notes:''}
         </div>
         <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
@@ -1213,15 +1269,19 @@ function renderFlights() {
 }
 
 async function saveFlight() {
+  const dep = buildDatetime('f-dep-date','f-dep-hr','f-dep-min','f-dep-ampm','f-dep-tz');
+  const arr = buildDatetime('f-arr-date','f-arr-hr','f-arr-min','f-arr-ampm','f-arr-tz');
   const payload = {
     family:          document.getElementById('f-fam').value,
     direction:       document.getElementById('f-dir').value,
     airline:         document.getElementById('f-airline').value,
     flight_number:   document.getElementById('f-num').value,
     departure_city:  document.getElementById('f-from').value,
-    departure_time:  buildDatetime('f-dep-date','f-dep-hr','f-dep-min','f-dep-ampm'),
+    departure_time:  dep.dt,
+    departure_tz:    dep.tz,
     arrival_city:    document.getElementById('f-to').value,
-    arrival_time:    buildDatetime('f-arr-date','f-arr-hr','f-arr-min','f-arr-ampm'),
+    arrival_time:    arr.dt,
+    arrival_tz:      arr.tz,
     notes:           document.getElementById('f-notes').value,
   };
   const { error } = await sb.from('vacation_flights').insert(payload);
