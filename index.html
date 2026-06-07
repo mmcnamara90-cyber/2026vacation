@@ -226,21 +226,62 @@
       border-bottom: 1px solid var(--border);
     }
     .packing-item:last-child { border-bottom: none; }
-    .packing-checkbox {
-      width: 26px;
-      height: 26px;
-      flex-shrink: 0;
-      cursor: pointer;
-      accent-color: var(--teal);
-      margin-top: 2px;
-    }
     .packing-item.packed .pack-text { text-decoration: line-through; color: var(--text-light); }
     .pack-main { flex: 1; }
     .pack-text { font-size: 17px; }
+    .pack-qty { font-size: 13px; font-weight: 700; color: var(--text-light); margin-left: 4px; }
     .pack-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
     .pack-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 100px; font-size: 12px; font-weight: 700; }
     .pack-tag-shared { background: #E0F5E8; color: var(--success); }
     .pack-tag-theme  { background: var(--purple-light); color: var(--purple); }
+    .pack-tag-port   { background: #FFF0D0; color: #A06000; }
+    .pack-tag-buy    { background: #FFF5D0; color: #8A6000; }
+    /* 3-state status button */
+    .status-btn {
+      flex-shrink: 0;
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      border: 2.5px solid var(--border);
+      background: white;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.18s;
+    }
+    .status-btn.s-unpacked { border-color: var(--border); background: white; }
+    .status-btn.s-need_to_buy { border-color: var(--mustard); background: var(--mustard-light); }
+    .status-btn.s-packed    { border-color: var(--teal);   background: var(--teal-light); }
+    /* Filter bar */
+    .pack-filters {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin: 12px 0 4px;
+    }
+    .pack-filter-btn {
+      padding: 5px 14px; border-radius: 100px; font-size: 13px; font-weight: 700;
+      border: 2px solid var(--border); background: white; cursor: pointer;
+      transition: all 0.15s; color: var(--text-light);
+    }
+    .pack-filter-btn.active { background: var(--navy); color: white; border-color: var(--navy); }
+    /* Shared overview panel */
+    .shared-overview {
+      background: #E8F7F0; border: 2px solid var(--teal);
+      border-radius: var(--radius); padding: 14px 18px; margin-bottom: 16px;
+    }
+    .shared-overview-title { font-weight: 700; color: var(--teal); font-size: 15px; margin-bottom: 10px; }
+    .shared-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; border-bottom: 1px solid rgba(26,140,122,0.15); font-size: 15px; }
+    .shared-row:last-child { border-bottom: none; }
+    .shared-owner { font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 100px; background: var(--teal); color: white; }
+    /* Template picker */
+    .tmpl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+    .tmpl-card {
+      border: 2px solid var(--border); border-radius: var(--radius-sm);
+      padding: 12px 14px; cursor: pointer; background: white;
+      transition: all 0.15s; text-align: left;
+    }
+    .tmpl-card:hover { border-color: var(--mustard); background: var(--mustard-light); }
+    .tmpl-card.selected { border-color: var(--teal); background: var(--teal-light); }
+    .tmpl-card-title { font-weight: 700; font-size: 15px; }
+    .tmpl-card-count { font-size: 12px; color: var(--text-light); margin-top: 2px; }
     .cat-head { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-light); margin: 14px 0 4px; }
     .progress-wrap { background: var(--border); border-radius: 100px; height: 14px; overflow: hidden; margin: 8px 0 4px; }
     .progress-fill { height: 100%; border-radius: 100px; transition: width 0.4s ease; }
@@ -645,7 +686,7 @@
   <!-- ── PACKING TAB ── -->
   <div class="tab-panel" id="panel-packing">
     <div class="section-title">🧳 Packing Lists</div>
-    <div class="section-sub">Check off items as you pack. Tag items as shared or for a theme night!</div>
+    <div class="section-sub">Tap the circle to cycle status: ○ unpacked → 🛒 need to buy → ✅ packed. Tag items as shared, port-specific, or theme night!</div>
 
     <!-- Rotating tip banner -->
     <div class="banner-carousel">
@@ -653,10 +694,24 @@
       <div class="banner-dots" id="banner-dots"></div>
     </div>
 
+    <!-- Shared overview (all families) -->
+    <div id="shared-overview"></div>
+
     <div class="family-tabs">
       <button class="family-tab fs" data-family="Swanson"  onclick="selectFamily('Swanson')">🏄 Swansons</button>
       <button class="family-tab"    data-family="McNamara" onclick="selectFamily('McNamara')">🌺 McNamaras</button>
       <button class="family-tab"    data-family="PJ"       onclick="selectFamily('PJ')">🎉 PJ</button>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="pack-filters" id="pack-filters">
+      <button class="pack-filter-btn active" data-filter="all" onclick="setPackFilter('all',this)">All</button>
+      <button class="pack-filter-btn" data-filter="unpacked"    onclick="setPackFilter('unpacked',this)">○ Unpacked</button>
+      <button class="pack-filter-btn" data-filter="need_to_buy" onclick="setPackFilter('need_to_buy',this)">🛒 Need to Buy</button>
+      <button class="pack-filter-btn" data-filter="packed"      onclick="setPackFilter('packed',this)">✅ Packed</button>
+      <button class="pack-filter-btn" data-filter="shared"      onclick="setPackFilter('shared',this)">🤝 Shared</button>
+      <button class="pack-filter-btn" data-filter="theme"       onclick="setPackFilter('theme',this)">🎉 Theme Night</button>
+      <button class="pack-filter-btn" data-filter="port"        onclick="setPackFilter('port',this)">🗺️ Port Tagged</button>
     </div>
 
     <div id="packing-content"><div class="loading">⏳ Loading…</div></div>
@@ -841,9 +896,15 @@
       <label>Who is this for?</label>
       <select id="p-person"></select>
     </div>
-    <div class="form-group">
-      <label>Item</label>
-      <input type="text" id="p-item" placeholder="e.g. Sunscreen SPF 50">
+    <div style="display:flex;gap:12px">
+      <div class="form-group" style="flex:1">
+        <label>Item</label>
+        <input type="text" id="p-item" placeholder="e.g. Sunscreen SPF 50">
+      </div>
+      <div class="form-group" style="width:80px">
+        <label>Qty</label>
+        <input type="number" id="p-qty" value="1" min="1" max="99" style="text-align:center">
+      </div>
     </div>
     <div class="form-group">
       <label>Category</label>
@@ -859,13 +920,41 @@
       </select>
     </div>
     <div class="form-group">
+      <label>Status</label>
+      <select id="p-status">
+        <option value="unpacked">○ Not packed yet</option>
+        <option value="need_to_buy">🛒 Need to buy</option>
+        <option value="packed">✅ Already packed</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Port Day <span style="font-weight:400;color:var(--text-light)">(optional)</span></label>
+      <select id="p-port">
+        <option value="">No specific port</option>
+        <option value="Fort Lauderdale">🚢 Fort Lauderdale (Jun 21)</option>
+        <option value="Falmouth">🇯🇲 Falmouth / Jamaica (Jun 23)</option>
+        <option value="CocoCay">🏝️ CocoCay (Jun 24)</option>
+        <option value="Nassau">🏖️ Nassau (Jun 25)</option>
+        <option value="Sea Day">🌊 Sea Day</option>
+      </select>
+    </div>
+    <div class="form-group">
       <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:700">
-        <input type="checkbox" id="p-shared" style="width:22px;height:22px;flex-shrink:0;accent-color:var(--teal)">
+        <input type="checkbox" id="p-shared" style="width:22px;height:22px;flex-shrink:0;accent-color:var(--teal)" onchange="toggleSharedBy()">
         🤝 Shared with the whole group
       </label>
     </div>
+    <div class="form-group" id="p-sharedby-group" style="display:none">
+      <label>Who's bringing it?</label>
+      <select id="p-sharedby">
+        <option value="">— Pick a family —</option>
+        <option value="Swanson">🏄 Swanson</option>
+        <option value="McNamara">🌺 McNamara</option>
+        <option value="PJ">🎉 PJ</option>
+      </select>
+    </div>
     <div class="form-group">
-      <label>Theme Night</label>
+      <label>Theme Night <span style="font-weight:400;color:var(--text-light)">(optional)</span></label>
       <select id="p-theme">
         <option value="">Not a theme night item</option>
         <option value="Resort Casual">🌴 Night 1: Resort Casual</option>
@@ -874,6 +963,20 @@
     <div class="modal-foot">
       <button class="btn btn-ghost" onclick="closeModal('m-packing')">Cancel</button>
       <button class="btn btn-mustard" onclick="savePackingItem()">Add to List 🧳</button>
+    </div>
+  </div>
+</div>
+
+<!-- Template Modal -->
+<div class="modal-bg hidden" id="m-template">
+  <div class="modal" style="max-width:560px">
+    <h3>📋 Cruise Starter Templates</h3>
+    <p style="color:var(--text-light);font-size:15px;margin-bottom:4px">Pick one or more templates to bulk-add items to <strong id="tmpl-person-label"></strong>'s list.</p>
+    <div class="tmpl-grid" id="tmpl-grid"></div>
+    <div style="font-size:13px;color:var(--text-light);margin-bottom:12px" id="tmpl-preview"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-template')">Cancel</button>
+      <button class="btn btn-mustard" onclick="applyTemplates()">Add Selected Items 🧳</button>
     </div>
   </div>
 </div>
@@ -1405,8 +1508,169 @@ async function saveTransit() {
 // ══════════════════════════════════════════
 // PACKING TAB
 // ══════════════════════════════════════════
+let packFilter = 'all';
+let packAllItems = [];
+
+// ── Starter templates ──
+const PACK_TEMPLATES = {
+  'Documents & ID': {
+    emoji: '📄', category: 'Documents',
+    items: [
+      'Passport','Health insurance card','Travel insurance docs',
+      'Cruise booking confirmation','Credit cards','SeaPass card (pick up at pier)',
+      'Excursion confirmation printouts','Emergency contact list'
+    ]
+  },
+  'Toiletries': {
+    emoji: '🧴', category: 'Toiletries',
+    items: [
+      'Reef-safe sunscreen SPF 50+','Aloe vera gel','Shampoo & conditioner',
+      'Body wash','Deodorant','Razors','Toothbrush & toothpaste',
+      'Lip balm with SPF','Makeup remover wipes','Hair ties'
+    ]
+  },
+  'Clothing': {
+    emoji: '👕', category: 'Clothes',
+    items: [
+      'Swimsuits (×2)','Coverup / beach dress','Shorts','T-shirts',
+      'One smart-casual dinner outfit','Sandals / flip flops',
+      'Comfortable walking shoes','Light cardigan (A/C on ship)',
+      'Pajamas','Underwear (×7)','Socks'
+    ]
+  },
+  'Beach & Pool': {
+    emoji: '🏖️', category: 'Beach & Pool',
+    items: [
+      'Beach bag','Waterproof phone pouch','Snorkel gear',
+      'Reef shoes (for CocoCay rocky entry)','Waterproof sunscreen stick for face',
+      'Dry bag for excursions','Packable rain poncho',
+      'Reusable water bottle','Cooling towel'
+    ]
+  },
+  'Tech & Essentials': {
+    emoji: '📱', category: 'Electronics',
+    items: [
+      'Phone charger','Portable battery / power bank',
+      'Plain power strip (no surge protector — cruise ships ban them)',
+      'Magnetic hooks (for cabin walls)','Waterproof Bluetooth speaker',
+      'Earbuds / headphones','Universal travel adapter',
+      'Downloaded movies / shows (airplane mode at sea)'
+    ]
+  },
+  'Health & Meds': {
+    emoji: '💊', category: 'Health',
+    items: [
+      'Motion sickness medication (Bonine or patch)','Pain relievers',
+      'Antidiarrheal','Antacids','Allergy medication',
+      'Daily prescriptions (+ extra days supply)','First aid kit',
+      'Hand sanitizer','Insect repellent (for Jamaica)'
+    ]
+  },
+  'Sky Class Extras': {
+    emoji: '⭐', category: 'General',
+    items: [
+      'Formal outfit for specialty dining','Day pack / small backpack for ports',
+      '$1 bills for tips at ports','Lanyard for SeaPass card',
+      'Collapsible bag for shopping haul','Clothes clips / mini hangers',
+      'Nightlight (for kids in cabin)','Reusable shopping bag'
+    ]
+  },
+};
+
+let selectedTemplates = new Set();
+let templateTargetPerson = '';
+
+function openTemplateModal(fam, person) {
+  templateTargetPerson = person;
+  document.getElementById('tmpl-person-label').textContent = person;
+  selectedTemplates.clear();
+  const grid = document.getElementById('tmpl-grid');
+  grid.innerHTML = Object.entries(PACK_TEMPLATES).map(([name, t]) =>
+    `<button class="tmpl-card" id="tmpl-${name}" onclick="toggleTemplate('${name}')">
+      <div class="tmpl-card-title">${t.emoji} ${name}</div>
+      <div class="tmpl-card-count">${t.items.length} items</div>
+    </button>`
+  ).join('');
+  updateTemplatePreview();
+  openModal('m-template');
+}
+
+function toggleTemplate(name) {
+  if (selectedTemplates.has(name)) selectedTemplates.delete(name);
+  else selectedTemplates.add(name);
+  document.getElementById(`tmpl-${name}`).classList.toggle('selected', selectedTemplates.has(name));
+  updateTemplatePreview();
+}
+
+function updateTemplatePreview() {
+  const count = [...selectedTemplates].reduce((s, n) => s + PACK_TEMPLATES[n].items.length, 0);
+  document.getElementById('tmpl-preview').textContent =
+    selectedTemplates.size ? `${count} items will be added across ${selectedTemplates.size} categor${selectedTemplates.size===1?'y':'ies'}.` : 'Select templates above.';
+}
+
+async function applyTemplates() {
+  if (!selectedTemplates.size) { toast('Pick at least one template','err'); return; }
+  const rows = [];
+  selectedTemplates.forEach(name => {
+    const t = PACK_TEMPLATES[name];
+    t.items.forEach(item => rows.push({
+      family: curFamily, person: templateTargetPerson,
+      item, category: t.category,
+      status: 'unpacked', quantity: 1,
+      packed: false, is_shared: false,
+    }));
+  });
+  const { error } = await sb.from('vacation_packing').insert(rows);
+  if (error) { toast('Error adding items','err'); return; }
+  toast(`${rows.length} items added! 🧳`);
+  closeModal('m-template');
+  loadPacking(curFamily);
+  loadSharedOverview();
+}
+
+// ── Filter ──
+function setPackFilter(filter, btn) {
+  packFilter = filter;
+  document.querySelectorAll('.pack-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPacking(curFamily, packAllItems);
+}
+
+function applyFilter(items) {
+  if (packFilter === 'all')         return items;
+  if (packFilter === 'unpacked')    return items.filter(i => i.status === 'unpacked' || (!i.status && !i.packed));
+  if (packFilter === 'need_to_buy') return items.filter(i => i.status === 'need_to_buy');
+  if (packFilter === 'packed')      return items.filter(i => i.status === 'packed' || (!i.status && i.packed));
+  if (packFilter === 'shared')      return items.filter(i => i.is_shared);
+  if (packFilter === 'theme')       return items.filter(i => i.theme_night);
+  if (packFilter === 'port')        return items.filter(i => i.port_day);
+  return items;
+}
+
+// ── Shared overview (cross-family) ──
+async function loadSharedOverview() {
+  const { data } = await sb.from('vacation_packing').select('*').eq('is_shared', true).order('item');
+  const el = document.getElementById('shared-overview');
+  if (!data || !data.length) { el.innerHTML = ''; return; }
+  const rows = data.map(i => {
+    const ownerBadge = i.shared_by
+      ? `<span class="shared-owner">${i.shared_by}</span>`
+      : `<span style="font-size:12px;color:var(--text-light);font-style:italic">owner TBD</span>`;
+    return `<div class="shared-row">
+      <span style="flex:1">${i.item}${(i.quantity||1)>1?` ×${i.quantity}`:''}</span>
+      ${ownerBadge}
+    </div>`;
+  }).join('');
+  el.innerHTML = `<div class="shared-overview">
+    <div class="shared-overview-title">🤝 Shared Group Items (${data.length})</div>
+    ${rows}
+  </div>`;
+}
+
 function selectFamily(fam) {
   curFamily = fam;
+  packFilter = 'all';
+  document.querySelectorAll('.pack-filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter==='all'));
   document.querySelectorAll('.family-tab').forEach(t => {
     t.className = 'family-tab';
     if (t.dataset.family === fam) {
@@ -1421,19 +1685,25 @@ function selectFamily(fam) {
 async function loadPacking(fam) {
   document.getElementById('packing-content').innerHTML = '<div class="loading">⏳ Loading…</div>';
   const { data } = await sb.from('vacation_packing').select('*').eq('family', fam).order('created_at');
-  renderPacking(fam, data || []);
+  packAllItems = data || [];
+  renderPacking(fam, packAllItems);
 }
 
-function renderPacking(fam, items) {
-  const cfg = FAMILIES[fam];
-  const el  = document.getElementById('packing-content');
-  const tot = items.length;
-  const done = items.filter(i => i.packed).length;
+const STATUS_ICON = { unpacked: '○', need_to_buy: '🛒', packed: '✅' };
+const STATUS_NEXT = { unpacked: 'need_to_buy', need_to_buy: 'packed', packed: 'unpacked' };
+
+function renderPacking(fam, allItems) {
+  const cfg  = FAMILIES[fam];
+  const el   = document.getElementById('packing-content');
+  const items = applyFilter(allItems);
+  const tot  = allItems.length;
+  const done = allItems.filter(i => i.status === 'packed' || (!i.status && i.packed)).length;
+  const toBuy = allItems.filter(i => i.status === 'need_to_buy').length;
   const pct  = tot ? Math.round((done/tot)*100) : 0;
 
   let html = `<div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-      <span style="font-weight:600;color:var(--navy)">${done} of ${tot} items packed</span>
+      <span style="font-weight:600;color:var(--navy)">${done} of ${tot} packed${toBuy ? ` · 🛒 ${toBuy} to buy` : ''}</span>
       <span style="font-size:28px;font-weight:700;color:${cfg.bg}">${pct}%</span>
     </div>
     <div class="progress-wrap">
@@ -1441,29 +1711,44 @@ function renderPacking(fam, items) {
     </div>
   </div>`;
 
+  if (!items.length && packFilter !== 'all') {
+    html += `<div class="card" style="text-align:center;color:var(--text-light);font-style:italic;padding:24px">No items match this filter.</div>`;
+    el.innerHTML = html;
+    return;
+  }
+
   for (const m of cfg.members) {
     const mItems = items.filter(i => i.person === m);
     html += `<div class="card">
       <div class="card-title">
         ${m}
-        <button class="btn btn-sm" style="background:${cfg.light};color:${cfg.bg};border:none;font-weight:700;cursor:pointer;padding:8px 16px;border-radius:8px" onclick="openPackModal('${fam}','${m}')">+ Add</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-sm" style="background:#F5F0FF;color:var(--purple);border:none;font-weight:700;cursor:pointer;padding:8px 12px;border-radius:8px;font-size:13px" onclick="openTemplateModal('${fam}','${m}')">📋 Templates</button>
+          <button class="btn btn-sm" style="background:${cfg.light};color:${cfg.bg};border:none;font-weight:700;cursor:pointer;padding:8px 16px;border-radius:8px" onclick="openPackModal('${fam}','${m}')">+ Add</button>
+        </div>
       </div>`;
 
     if (!mItems.length) {
-      html += `<p style="color:var(--text-light);font-style:italic">Nothing added yet — click Add to start!</p>`;
+      html += `<p style="color:var(--text-light);font-style:italic">Nothing here — use Templates for a quick start, or Add to enter items manually.</p>`;
     } else {
       const byCat = {};
       mItems.forEach(i => { if(!byCat[i.category]) byCat[i.category]=[]; byCat[i.category].push(i); });
       for (const [cat, catItems] of Object.entries(byCat)) {
         html += `<div class="cat-head">${cat}</div>`;
         catItems.forEach(i => {
+          const st = i.status || (i.packed ? 'packed' : 'unpacked');
           const tags = [];
-          if (i.is_shared) tags.push(`<span class="pack-tag pack-tag-shared">🤝 Shared</span>`);
+          if (i.is_shared) {
+            const owner = i.shared_by ? ` · ${i.shared_by}` : '';
+            tags.push(`<span class="pack-tag pack-tag-shared">🤝 Shared${owner}</span>`);
+          }
           if (i.theme_night) tags.push(`<span class="pack-tag pack-tag-theme">🎉 ${i.theme_night}</span>`);
-          html += `<div class="packing-item ${i.packed?'packed':''}" id="pi-${i.id}">
-            <input type="checkbox" class="packing-checkbox" ${i.packed?'checked':''} onchange="togglePacked('${i.id}',this.checked,'${fam}')">
+          if (i.port_day)    tags.push(`<span class="pack-tag pack-tag-port">🗺️ ${i.port_day}</span>`);
+          if (st === 'need_to_buy') tags.push(`<span class="pack-tag pack-tag-buy">🛒 Need to buy</span>`);
+          html += `<div class="packing-item ${st==='packed'?'packed':''}" id="pi-${i.id}">
+            <button class="status-btn s-${st}" onclick="cycleStatus('${i.id}','${st}','${fam}')" title="Tap to cycle: unpacked → need to buy → packed">${STATUS_ICON[st]||'○'}</button>
             <div class="pack-main">
-              <div class="pack-text">${i.item}</div>
+              <div class="pack-text">${i.item}${(i.quantity||1)>1?`<span class="pack-qty">×${i.quantity}</span>`:''}</div>
               ${tags.length ? `<div class="pack-tags">${tags.join('')}</div>` : ''}
             </div>
             <button onclick="delPacking('${i.id}','${fam}')" class="del-btn">×</button>
@@ -1478,38 +1763,63 @@ function renderPacking(fam, items) {
   el.innerHTML = html;
 }
 
+function toggleSharedBy() {
+  const checked = document.getElementById('p-shared').checked;
+  document.getElementById('p-sharedby-group').style.display = checked ? '' : 'none';
+  if (!checked) document.getElementById('p-sharedby').value = '';
+}
+
 function openPackModal(fam, person) {
   const sel = document.getElementById('p-person');
   sel.innerHTML = FAMILIES[fam].members.map(m => `<option value="${m}" ${m===person?'selected':''}>${m}</option>`).join('');
-  document.getElementById('p-item').value = '';
+  document.getElementById('p-item').value   = '';
+  document.getElementById('p-qty').value    = '1';
+  document.getElementById('p-status').value = 'unpacked';
+  document.getElementById('p-port').value   = '';
   document.getElementById('p-shared').checked = false;
-  document.getElementById('p-theme').value = '';
+  document.getElementById('p-sharedby-group').style.display = 'none';
+  document.getElementById('p-sharedby').value = '';
+  document.getElementById('p-theme').value  = '';
   openModal('m-packing');
 }
 
 async function savePackingItem() {
   const item = document.getElementById('p-item').value.trim();
   if (!item) { toast('Please enter an item name','err'); return; }
-  const themeVal = document.getElementById('p-theme').value;
+  const isShared = document.getElementById('p-shared').checked;
   const { error } = await sb.from('vacation_packing').insert({
-    family:     curFamily,
-    person:     document.getElementById('p-person').value,
+    family:      curFamily,
+    person:      document.getElementById('p-person').value,
     item,
-    category:   document.getElementById('p-cat').value,
-    packed:     false,
-    is_shared:  document.getElementById('p-shared').checked,
-    theme_night: themeVal || null,
+    quantity:    parseInt(document.getElementById('p-qty').value) || 1,
+    category:    document.getElementById('p-cat').value,
+    status:      document.getElementById('p-status').value,
+    packed:      document.getElementById('p-status').value === 'packed',
+    port_day:    document.getElementById('p-port').value || null,
+    is_shared:   isShared,
+    shared_by:   isShared ? (document.getElementById('p-sharedby').value || null) : null,
+    theme_night: document.getElementById('p-theme').value || null,
   });
   if (error) { toast('Error saving item','err'); return; }
   toast('Item added! 🧳');
   closeModal('m-packing');
   loadPacking(curFamily);
+  loadSharedOverview();
 }
 
-async function togglePacked(id, packed, fam) {
-  await sb.from('vacation_packing').update({ packed }).eq('id', id);
-  const row = document.getElementById(`pi-${id}`);
-  if (row) row.className = `packing-item ${packed?'packed':''}`;
+async function cycleStatus(id, current, fam) {
+  const next = STATUS_NEXT[current] || 'unpacked';
+  await sb.from('vacation_packing').update({ status: next, packed: next === 'packed' }).eq('id', id);
+  // Optimistically update the button
+  const btn = document.querySelector(`#pi-${id} .status-btn`);
+  if (btn) {
+    btn.className = `status-btn s-${next}`;
+    btn.textContent = STATUS_ICON[next];
+    btn.setAttribute('onclick', `cycleStatus('${id}','${next}','${fam}')`);
+    const row = document.getElementById(`pi-${id}`);
+    if (row) row.className = `packing-item ${next==='packed'?'packed':''}`;
+    // Update tag display inline — re-render is heavier, refresh asynchronously
+  }
   loadPacking(fam);
 }
 
@@ -1517,6 +1827,7 @@ async function delPacking(id, fam) {
   await sb.from('vacation_packing').delete().eq('id', id);
   toast('Item removed');
   loadPacking(fam);
+  loadSharedOverview();
 }
 
 // ══════════════════════════════════════════
@@ -1937,6 +2248,7 @@ async function delTodo(id) {
   renderBanner();
   bannerTimer = setInterval(nextBanner, 5500);
   await Promise.all([loadFlights(), loadPacking('Swanson'), loadDreams(), loadTodos(), loadTransit()]);
+  loadSharedOverview();
   loadWeather();
 })();
 </script>
