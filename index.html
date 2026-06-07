@@ -342,13 +342,29 @@
     }
     .dream-row:last-of-type { border-bottom: none; }
     .dream-star { font-size: 18px; flex-shrink: 0; }
-    .dream-body { flex: 1; }
+    .dream-body { flex: 1; min-width: 0; }
     .dream-txt  { font-size: 16px; line-height: 1.4; }
-    .dream-day  { font-size: 13px; font-weight: 700; color: var(--teal); margin-top: 2px; }
-    .dream-note { font-size: 13px; color: var(--text-light); }
-    .dream-linked { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: var(--purple); background: var(--purple-light); padding: 2px 8px; border-radius: 100px; margin-top: 4px; cursor: pointer; border: none; font-family: inherit; }
-    .dream-link-btn { background: none; border: 1.5px dashed var(--border); border-radius: 100px; font-size: 12px; font-weight: 700; color: var(--text-light); padding: 2px 8px; cursor: pointer; font-family: inherit; margin-top: 4px; transition: all 0.15s; }
+    .dream-txt.done { text-decoration: line-through; color: var(--text-light); }
+    .dream-day  { font-size: 13px; font-weight: 700; color: var(--teal); margin-top: 3px; }
+    .dream-note { font-size: 13px; color: var(--text-light); margin-top: 3px; background: var(--sand); border-radius: 6px; padding: 5px 9px; line-height: 1.5; }
+    .dream-memory { font-size: 13px; color: var(--success); margin-top: 3px; background: #E8F7F0; border-radius: 6px; padding: 5px 9px; line-height: 1.5; }
+    .dream-cat { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 100px; background: var(--sand); color: var(--navy); margin-top: 3px; }
+    .dream-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+    .dream-linked { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: var(--purple); background: var(--purple-light); padding: 2px 8px; border-radius: 100px; cursor: pointer; border: none; font-family: inherit; }
+    .dream-link-btn { background: none; border: 1.5px dashed var(--border); border-radius: 100px; font-size: 12px; font-weight: 700; color: var(--text-light); padding: 2px 8px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
     .dream-link-btn:hover { border-color: var(--purple); color: var(--purple); }
+    .dream-done-btn { background: none; border: 1.5px solid var(--border); border-radius: 100px; font-size: 12px; font-weight: 700; color: var(--text-light); padding: 2px 8px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+    .dream-done-btn.is-done { background: #E8F7F0; border-color: var(--success); color: var(--success); }
+    .dream-done-btn:hover { border-color: var(--teal); color: var(--teal); }
+    .dream-edit-btn { background: none; border: 1.5px solid var(--border); border-radius: 100px; font-size: 12px; font-weight: 700; color: var(--text-light); padding: 2px 8px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+    .dream-edit-btn:hover { border-color: var(--mustard); color: var(--mustard); }
+    /* Visual link picker */
+    .link-picker { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 340px; overflow-y: auto; margin: 12px 0; }
+    .link-card { border: 2px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; cursor: pointer; background: white; transition: all 0.15s; text-align: left; }
+    .link-card:hover { border-color: var(--purple); background: var(--purple-light); }
+    .link-card.selected { border-color: var(--purple); background: var(--purple-light); }
+    .link-card-name { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+    .link-card-dream { font-size: 13px; line-height: 1.4; color: var(--text); }
     .add-dream {
       width: 100%;
       padding: 11px;
@@ -759,7 +775,8 @@
 <!-- Flight Modal -->
 <div class="modal-bg hidden" id="m-flight">
   <div class="modal">
-    <h3>✈️ Add a Flight</h3>
+    <h3 id="flight-modal-title">✈️ Add a Flight</h3>
+    <input type="hidden" id="f-edit-id">
     <div class="form-group">
       <label>Which family?</label>
       <select id="f-fam">
@@ -985,8 +1002,23 @@
 <div class="modal-bg hidden" id="m-dream">
   <div class="modal">
     <h3 id="dream-modal-title">✨ Add a Dream</h3>
+    <input type="hidden" id="d-edit-id">
     <input type="hidden" id="d-person">
     <input type="hidden" id="d-family">
+    <div class="form-group">
+      <label>Category <span style="font-weight:400;color:var(--text-light)">(optional)</span></label>
+      <select id="d-cat">
+        <option value="">No category</option>
+        <option value="🎭 Shows & Entertainment">🎭 Shows &amp; Entertainment</option>
+        <option value="🍽️ Food & Drink">🍽️ Food &amp; Drink</option>
+        <option value="🤿 Water & Adventure">🤿 Water &amp; Adventure</option>
+        <option value="🏖️ Beach & Relaxation">🏖️ Beach &amp; Relaxation</option>
+        <option value="🛍️ Shopping">🛍️ Shopping</option>
+        <option value="🌆 Explore Ashore">🌆 Explore Ashore</option>
+        <option value="🛳️ Ship Life">🛳️ Ship Life</option>
+        <option value="⭐ Other">⭐ Other</option>
+      </select>
+    </div>
     <div class="form-group">
       <label>What's your dream for this trip?</label>
       <textarea id="d-dream" placeholder="e.g. Swim with stingrays at CocoCay, try jerk chicken in Jamaica, see the ship's Broadway show…"></textarea>
@@ -1006,8 +1038,8 @@
       </select>
     </div>
     <div class="form-group">
-      <label>Notes <span style="font-weight:400;color:var(--text-light)">(optional)</span></label>
-      <input type="text" id="d-notes" placeholder="e.g. Need to book in advance">
+      <label>Notes <span style="font-weight:400;color:var(--text-light)">(optional — e.g. need to book in advance, must-try restaurant)</span></label>
+      <textarea id="d-notes" rows="2" placeholder="e.g. Need to book via concierge before sailing" style="min-height:60px"></textarea>
     </div>
     <div class="modal-foot">
       <button class="btn btn-ghost" onclick="closeModal('m-dream')">Cancel</button>
@@ -1016,16 +1048,30 @@
   </div>
 </div>
 
-<!-- Dream Link Modal -->
-<div class="modal-bg hidden" id="m-link">
+<!-- Dream Memory Modal -->
+<div class="modal-bg hidden" id="m-memory">
   <div class="modal">
-    <h3>🔗 Link Dreams</h3>
-    <p style="color:var(--text-light);margin-bottom:20px;font-size:16px">Connect this dream with someone else who shares the same idea — they'll appear together on the calendar.</p>
-    <input type="hidden" id="link-from-id">
+    <h3>✅ Mark as Done!</h3>
+    <p style="color:var(--text-light);font-size:15px;margin-bottom:16px" id="memory-dream-label"></p>
+    <input type="hidden" id="memory-dream-id">
     <div class="form-group">
-      <label>Link with this dream:</label>
-      <select id="link-to-dream" style="font-size:16px"></select>
+      <label>Add a memory note <span style="font-weight:400;color:var(--text-light)">(optional)</span></label>
+      <textarea id="memory-note" rows="3" placeholder="How did it go? What was it like? Any highlights to remember…"></textarea>
     </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-memory')">Cancel</button>
+      <button class="btn btn-teal" onclick="saveMemory()">✅ Mark Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Dream Link Modal — visual picker -->
+<div class="modal-bg hidden" id="m-link">
+  <div class="modal" style="max-width:560px">
+    <h3>🔗 Link Dreams</h3>
+    <p style="color:var(--text-light);margin-bottom:4px;font-size:15px">Tap a dream below to connect it — they'll appear paired on the calendar.</p>
+    <input type="hidden" id="link-from-id">
+    <div class="link-picker" id="link-picker"></div>
     <div class="modal-foot">
       <button class="btn btn-ghost" onclick="closeModal('m-link')">Cancel</button>
       <button class="btn btn-purple" onclick="saveDreamLink()">Link Dreams 🔗</button>
@@ -1212,7 +1258,7 @@ function jumpBanner(i) {
   bannerIdx = i;
   renderBanner();
   clearInterval(bannerTimer);
-  bannerTimer = setInterval(nextBanner, 5500);
+  bannerTimer = setInterval(nextBanner, 20000);
 }
 
 function nextBanner() {
@@ -1259,17 +1305,6 @@ document.querySelectorAll('.modal-bg').forEach(bg => {
 // ══════════════════════════════════════════
 // TRAVEL TAB — FLIGHTS
 // ══════════════════════════════════════════
-function openFlightModal() {
-  ['f-dep-hr','f-arr-hr'].forEach(id => document.getElementById(id).value = '');
-  ['f-dep-min','f-arr-min'].forEach(id => document.getElementById(id).value = '00');
-  document.getElementById('f-dep-ampm').value = 'AM';
-  document.getElementById('f-arr-ampm').value = 'PM';
-  document.getElementById('f-dep-date').value = '';
-  document.getElementById('f-arr-date').value = '';
-  document.getElementById('f-dep-tz').value = '-240|EDT';
-  document.getElementById('f-arr-tz').value = '-240|EDT';
-  openModal('m-flight');
-}
 
 function buildDatetime(dateId, hrId, minId, ampmId, tzId) {
   const date = document.getElementById(dateId).value;
@@ -1361,6 +1396,7 @@ function renderFlights() {
         </div>
         <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
           ${f.flight_number ? `<button class="btn btn-teal btn-sm" onclick="checkFlightStatus('${f.id}','${safeNum}','${depDate}')">📡 Check Status</button>` : ''}
+          <button class="btn btn-sm" style="background:var(--mustard-light);color:var(--navy);border:none;font-weight:700;cursor:pointer;padding:8px 14px;border-radius:8px" onclick="openFlightEdit('${f.id}')">✏️ Edit</button>
           <button class="btn btn-ghost btn-sm" onclick="delFlight('${f.id}')">🗑️ Remove</button>
         </div>
         <div id="fstatus-${f.id}" style="display:none"></div>
@@ -1371,9 +1407,60 @@ function renderFlights() {
   el.innerHTML = html;
 }
 
+function openFlightModal() {
+  document.getElementById('f-edit-id').value = '';
+  document.getElementById('flight-modal-title').textContent = '✈️ Add a Flight';
+  document.querySelectorAll('#m-flight input[type=text]').forEach(i => i.value='');
+  document.getElementById('f-dep-tz').value = '-240|EDT';
+  document.getElementById('f-arr-tz').value = '-240|EDT';
+  openModal('m-flight');
+}
+
+function openFlightEdit(id) {
+  const f = allFlights.find(x => x.id === id);
+  if (!f) return;
+  document.getElementById('f-edit-id').value    = id;
+  document.getElementById('flight-modal-title').textContent = '✏️ Edit Flight';
+  document.getElementById('f-fam').value        = f.family;
+  document.getElementById('f-dir').value        = f.direction;
+  document.getElementById('f-airline').value    = f.airline || '';
+  document.getElementById('f-num').value        = f.flight_number || '';
+  document.getElementById('f-from').value       = f.departure_city || '';
+  document.getElementById('f-to').value         = f.arrival_city || '';
+  document.getElementById('f-notes').value      = f.notes || '';
+  // Restore departure datetime
+  if (f.departure_time) {
+    const dt = new Date(f.departure_time);
+    const tzRaw = f.departure_tz || '-240|EDT';
+    const offsetMins = parseInt(tzRaw.split('|')[0]);
+    const local = new Date(dt.getTime() + offsetMins * 60000);
+    document.getElementById('f-dep-date').value = local.toISOString().slice(0,10);
+    const h24 = local.getUTCHours();
+    document.getElementById('f-dep-hr').value   = String(h24 % 12 || 12);
+    document.getElementById('f-dep-min').value  = String(local.getUTCMinutes()).padStart(2,'0');
+    document.getElementById('f-dep-ampm').value = h24 >= 12 ? 'PM' : 'AM';
+    document.getElementById('f-dep-tz').value   = tzRaw;
+  }
+  // Restore arrival datetime
+  if (f.arrival_time) {
+    const dt = new Date(f.arrival_time);
+    const tzRaw = f.arrival_tz || '-240|EDT';
+    const offsetMins = parseInt(tzRaw.split('|')[0]);
+    const local = new Date(dt.getTime() + offsetMins * 60000);
+    document.getElementById('f-arr-date').value = local.toISOString().slice(0,10);
+    const h24 = local.getUTCHours();
+    document.getElementById('f-arr-hr').value   = String(h24 % 12 || 12);
+    document.getElementById('f-arr-min').value  = String(local.getUTCMinutes()).padStart(2,'0');
+    document.getElementById('f-arr-ampm').value = h24 >= 12 ? 'PM' : 'AM';
+    document.getElementById('f-arr-tz').value   = tzRaw;
+  }
+  openModal('m-flight');
+}
+
 async function saveFlight() {
   const dep = buildDatetime('f-dep-date','f-dep-hr','f-dep-min','f-dep-ampm','f-dep-tz');
   const arr = buildDatetime('f-arr-date','f-arr-hr','f-arr-min','f-arr-ampm','f-arr-tz');
+  const editId = document.getElementById('f-edit-id').value;
   const payload = {
     family:          document.getElementById('f-fam').value,
     direction:       document.getElementById('f-dir').value,
@@ -1387,11 +1474,15 @@ async function saveFlight() {
     arrival_tz:      arr.tz,
     notes:           document.getElementById('f-notes').value,
   };
-  const { error } = await sb.from('vacation_flights').insert(payload);
+  let error;
+  if (editId) {
+    ({ error } = await sb.from('vacation_flights').update(payload).eq('id', editId));
+  } else {
+    ({ error } = await sb.from('vacation_flights').insert(payload));
+  }
   if (error) { toast('Error saving flight','err'); return; }
-  toast('Flight added! ✈️');
+  toast(editId ? 'Flight updated! ✈️' : 'Flight added! ✈️');
   closeModal('m-flight');
-  document.querySelectorAll('#m-flight input[type=text]').forEach(i => i.value='');
   loadFlights();
 }
 
@@ -1516,9 +1607,7 @@ const PACK_TEMPLATES = {
   'Documents & ID': {
     emoji: '📄', category: 'Documents',
     items: [
-      'Passport','Health insurance card','Travel insurance docs',
-      'Cruise booking confirmation','Credit cards','SeaPass card (pick up at pier)',
-      'Excursion confirmation printouts','Emergency contact list'
+      'Passport','Credit cards'
     ]
   },
   'Toiletries': {
@@ -1541,10 +1630,9 @@ const PACK_TEMPLATES = {
   'Beach & Pool': {
     emoji: '🏖️', category: 'Beach & Pool',
     items: [
-      'Beach bag','Waterproof phone pouch','Snorkel gear',
+      'Beach bag','Snorkel gear',
       'Reef shoes (for CocoCay rocky entry)','Waterproof sunscreen stick for face',
-      'Dry bag for excursions','Packable rain poncho',
-      'Reusable water bottle','Cooling towel'
+      'Reusable water bottle'
     ]
   },
   'Tech & Essentials': {
@@ -1560,8 +1648,7 @@ const PACK_TEMPLATES = {
   'Health & Meds': {
     emoji: '💊', category: 'Health',
     items: [
-      'Motion sickness medication (Bonine or patch)','Pain relievers',
-      'Antidiarrheal','Antacids','Allergy medication',
+      'Pain relievers','Antidiarrheal','Antacids','Allergy medication',
       'Daily prescriptions (+ extra days supply)','First aid kit',
       'Hand sanitizer','Insect repellent (for Jamaica)'
     ]
@@ -1898,6 +1985,8 @@ async function loadWeather() {
 // ══════════════════════════════════════════
 // DREAMS TAB
 // ══════════════════════════════════════════
+const DREAM_CAP = 3;
+
 async function loadDreams() {
   const { data } = await sb.from('vacation_dreams').select('*').order('created_at');
   allDreams = data || [];
@@ -1911,7 +2000,7 @@ function renderDreams() {
   for (const { person, family } of PEOPLE) {
     const dreams = allDreams.filter(d => d.person === person);
     const cfg    = FAMILIES[family];
-    const canAdd = dreams.length < 2;
+    const canAdd = dreams.length < DREAM_CAP;
 
     html += `<div class="person-card">
       <div class="pc-head" style="background:${cfg.bg}">
@@ -1927,14 +2016,20 @@ function renderDreams() {
     dreams.forEach(d => {
       const linkedDream = d.linked_dream_id ? allDreams.find(x => x.id === d.linked_dream_id) : null;
       html += `<div class="dream-row">
-        <span class="dream-star">⭐</span>
+        <span class="dream-star">${d.is_done ? '✅' : '⭐'}</span>
         <div class="dream-body">
-          <div class="dream-txt">${d.dream}</div>
+          ${d.category ? `<div class="dream-cat">${d.category}</div>` : ''}
+          <div class="dream-txt${d.is_done?' done':''}">${d.dream}</div>
           ${d.assigned_day ? `<div class="dream-day">📅 ${d.assigned_day}</div>` : ''}
-          ${d.notes ? `<div class="dream-note">${d.notes}</div>` : ''}
-          ${linkedDream
-            ? `<button class="dream-linked" onclick="unlinkDream('${d.id}')">🔗 Linked with ${linkedDream.person} · tap to unlink</button>`
-            : `<button class="dream-link-btn" onclick="openLinkModal('${d.id}')">🔗 Link with someone</button>`}
+          ${d.notes ? `<div class="dream-note">📝 ${d.notes}</div>` : ''}
+          ${d.memory_note ? `<div class="dream-memory">💭 ${d.memory_note}</div>` : ''}
+          <div class="dream-actions">
+            ${linkedDream
+              ? `<button class="dream-linked" onclick="unlinkDream('${d.id}')">🔗 ${linkedDream.person} · unlink</button>`
+              : `<button class="dream-link-btn" onclick="openLinkModal('${d.id}')">🔗 Link</button>`}
+            <button class="dream-done-btn${d.is_done?' is-done':''}" onclick="${d.is_done?`unmarkDone('${d.id}')`:`openMemoryModal('${d.id}')`}">${d.is_done?'✅ Done':'○ Mark done'}</button>
+            <button class="dream-edit-btn" onclick="openDreamEdit('${d.id}')">✏️ Edit</button>
+          </div>
         </div>
         <button onclick="delDream('${d.id}')" class="del-btn">×</button>
       </div>`;
@@ -1942,10 +2037,10 @@ function renderDreams() {
 
     if (canAdd) {
       html += `<button class="add-dream" onclick="openDreamModal('${person}','${family}')">
-        ✨ Add dream${dreams.length===1?' (1 more allowed)':' (up to 2)'}
+        ✨ Add dream${dreams.length>0?` (${DREAM_CAP-dreams.length} more allowed)`:''}
       </button>`;
     } else {
-      html += `<p style="text-align:center;font-size:13px;color:var(--teal);font-weight:700;margin-top:10px">✅ Dreams captured!</p>`;
+      html += `<p style="text-align:center;font-size:13px;color:var(--teal);font-weight:700;margin-top:10px">✅ ${DREAM_CAP} dreams captured!</p>`;
     }
 
     html += `</div></div>`;
@@ -1969,7 +2064,6 @@ function renderDreamsCalendar() {
       d.assigned_day && d.assigned_day.startsWith(`June ${dayNum}`)
     );
 
-    // Group linked pairs so they appear together
     const shown = new Set();
     const dreamItems = [];
     for (const d of dayDreams) {
@@ -1984,7 +2078,7 @@ function renderDreamsCalendar() {
           dreamItems.push(`<div class="dcal-dream">
             <span class="dcal-who" style="color:${c1}">${d.person}</span>
             <span class="dcal-who" style="color:${c2}">${partner.person}</span>
-            <span>🔗 ${d.dream}</span>
+            <span>🔗 ${d.dream}${d.is_done?' ✅':''}</span>
           </div>`);
           continue;
         }
@@ -1992,7 +2086,7 @@ function renderDreamsCalendar() {
       const col = FAMILIES[d.family]?.bg || '#888';
       dreamItems.push(`<div class="dcal-dream">
         <span class="dcal-who" style="color:${col}">${d.person}</span>
-        <span>${d.dream}</span>
+        <span${d.is_done?' style="text-decoration:line-through;opacity:0.6"':''}>${d.dream}${d.is_done?' ✅':''}</span>
       </div>`);
     }
 
@@ -2003,7 +2097,6 @@ function renderDreamsCalendar() {
     </div>`;
   }
 
-  // Unscheduled dreams
   const unscheduled = allDreams.filter(d => !d.assigned_day);
   if (unscheduled.length) {
     html += `<div class="dcal-card" style="border:2px dashed var(--border);box-shadow:none">
@@ -2020,65 +2113,122 @@ function renderDreamsCalendar() {
 }
 
 function openDreamModal(person, family) {
-  document.getElementById('d-person').value = person;
-  document.getElementById('d-family').value = family;
-  document.getElementById('d-dream').value  = '';
-  document.getElementById('d-notes').value  = '';
-  document.getElementById('d-day').value    = '';
+  document.getElementById('d-edit-id').value = '';
+  document.getElementById('d-person').value  = person;
+  document.getElementById('d-family').value  = family;
+  document.getElementById('d-dream').value   = '';
+  document.getElementById('d-notes').value   = '';
+  document.getElementById('d-day').value     = '';
+  document.getElementById('d-cat').value     = '';
   document.getElementById('dream-modal-title').textContent = `✨ ${person}'s Dream`;
+  openModal('m-dream');
+}
+
+function openDreamEdit(id) {
+  const d = allDreams.find(x => x.id === id);
+  if (!d) return;
+  document.getElementById('d-edit-id').value = id;
+  document.getElementById('d-person').value  = d.person;
+  document.getElementById('d-family').value  = d.family;
+  document.getElementById('d-dream').value   = d.dream;
+  document.getElementById('d-notes').value   = d.notes || '';
+  document.getElementById('d-day').value     = d.assigned_day || '';
+  document.getElementById('d-cat').value     = d.category || '';
+  document.getElementById('dream-modal-title').textContent = `✏️ Edit ${d.person}'s Dream`;
   openModal('m-dream');
 }
 
 async function saveDream() {
   const dream = document.getElementById('d-dream').value.trim();
   if (!dream) { toast('Please describe your dream!','err'); return; }
-  const { error } = await sb.from('vacation_dreams').insert({
-    person:       document.getElementById('d-person').value,
-    family:       document.getElementById('d-family').value,
+  const editId = document.getElementById('d-edit-id').value;
+  const payload = {
     dream,
     assigned_day: document.getElementById('d-day').value  || null,
-    notes:        document.getElementById('d-notes').value || null,
-  });
+    notes:        document.getElementById('d-notes').value.trim() || null,
+    category:     document.getElementById('d-cat').value  || null,
+  };
+  let error;
+  if (editId) {
+    ({ error } = await sb.from('vacation_dreams').update(payload).eq('id', editId));
+  } else {
+    payload.person = document.getElementById('d-person').value;
+    payload.family = document.getElementById('d-family').value;
+    ({ error } = await sb.from('vacation_dreams').insert(payload));
+  }
   if (error) { toast('Error saving dream','err'); return; }
-  toast('Dream saved! ✨');
+  toast(editId ? 'Dream updated! ✨' : 'Dream saved! ✨');
   closeModal('m-dream');
+  loadDreams();
+}
+
+function openMemoryModal(id) {
+  const d = allDreams.find(x => x.id === id);
+  if (!d) return;
+  document.getElementById('memory-dream-id').value = id;
+  document.getElementById('memory-dream-label').textContent = `"${d.dream}"`;
+  document.getElementById('memory-note').value = '';
+  openModal('m-memory');
+}
+
+async function saveMemory() {
+  const id   = document.getElementById('memory-dream-id').value;
+  const note = document.getElementById('memory-note').value.trim();
+  const { error } = await sb.from('vacation_dreams').update({ is_done: true, memory_note: note || null }).eq('id', id);
+  if (error) { toast('Error saving','err'); return; }
+  toast('Marked done! 🎉');
+  closeModal('m-memory');
+  loadDreams();
+}
+
+async function unmarkDone(id) {
+  await sb.from('vacation_dreams').update({ is_done: false }).eq('id', id);
+  toast('Unmarked');
   loadDreams();
 }
 
 async function delDream(id) {
   if (!confirm('Remove this dream?')) return;
-  // Unlink any dream pointing to this one
   await sb.from('vacation_dreams').update({ linked_dream_id: null }).eq('linked_dream_id', id);
   await sb.from('vacation_dreams').delete().eq('id', id);
   toast('Dream removed');
   loadDreams();
 }
 
+let selectedLinkId = null;
+
 function openLinkModal(dreamId) {
   const currentDream = allDreams.find(d => d.id === dreamId);
   if (!currentDream) return;
   const candidates = allDreams.filter(d =>
-    d.id !== dreamId &&
-    d.person !== currentDream.person &&
-    !d.linked_dream_id
+    d.id !== dreamId && d.person !== currentDream.person && !d.linked_dream_id
   );
-  if (!candidates.length) {
-    toast('No other unlinked dreams to connect with yet!', 'err');
-    return;
-  }
+  if (!candidates.length) { toast('No other unlinked dreams to connect with yet!','err'); return; }
   document.getElementById('link-from-id').value = dreamId;
-  const sel = document.getElementById('link-to-dream');
-  sel.innerHTML = candidates.map(d =>
-    `<option value="${d.id}">${d.person}: ${d.dream.length > 55 ? d.dream.slice(0,55)+'…' : d.dream}</option>`
-  ).join('');
+  selectedLinkId = null;
+  const picker = document.getElementById('link-picker');
+  picker.innerHTML = candidates.map(d => {
+    const cfg = FAMILIES[d.family] || { bg: '#888' };
+    return `<button class="link-card" id="lc-${d.id}" onclick="selectLinkCard('${d.id}')">
+      <div class="link-card-name" style="color:${cfg.bg}">${d.person}</div>
+      <div class="link-card-dream">${d.dream}</div>
+      ${d.assigned_day ? `<div style="font-size:11px;color:var(--teal);margin-top:4px">📅 ${d.assigned_day}</div>` : ''}
+    </button>`;
+  }).join('');
   openModal('m-link');
+}
+
+function selectLinkCard(id) {
+  selectedLinkId = id;
+  document.querySelectorAll('.link-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById(`lc-${id}`)?.classList.add('selected');
 }
 
 async function saveDreamLink() {
   const fromId = document.getElementById('link-from-id').value;
-  const toId   = document.getElementById('link-to-dream').value;
-  await sb.from('vacation_dreams').update({ linked_dream_id: toId }).eq('id', fromId);
-  await sb.from('vacation_dreams').update({ linked_dream_id: fromId }).eq('id', toId);
+  if (!selectedLinkId) { toast('Pick a dream to link with','err'); return; }
+  await sb.from('vacation_dreams').update({ linked_dream_id: selectedLinkId }).eq('id', fromId);
+  await sb.from('vacation_dreams').update({ linked_dream_id: fromId }).eq('id', selectedLinkId);
   toast('Dreams linked! 🔗');
   closeModal('m-link');
   loadDreams();
@@ -2246,7 +2396,7 @@ async function delTodo(id) {
   updateCountdown();
   setInterval(updateCountdown, 60000);
   renderBanner();
-  bannerTimer = setInterval(nextBanner, 5500);
+  bannerTimer = setInterval(nextBanner, 20000);
   await Promise.all([loadFlights(), loadPacking('Swanson'), loadDreams(), loadTodos(), loadTransit()]);
   loadSharedOverview();
   loadWeather();
