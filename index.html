@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Allure of the Seas · June 2026</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #FFF5E4;
+      --terra: #D04A28;
+      --terra-light: #FDEAE5;
+      --mustard: #D99218;
+      --mustard-light: #FFF5D0;
+      --teal: #1A8C7A;
+      --teal-light: #E0F4F1;
+      --navy: #1B3350;
+      --navy-mid: #2C4E72;
+      --purple: #7C3AED;
+      --purple-light: #F3EEFF;
+      --sand: #F5E2C0;
+      --white: #FFFFFF;
+      --text: #2A2A2A;
+      --text-light: #666666;
+      --border: #E0CEB8;
+      --success: #2A7A48;
+      --danger: #B83020;
+      --shadow: 0 4px 20px rgba(0,0,0,0.10);
+      --radius: 14px;
+      --radius-sm: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      font-size: 18px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      background: var(--navy);
+      color: white;
+      padding: 22px 24px 18px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-top { display: flex; align-items: center; justify-content: center; gap: 12px; }
+    .header-top h1 { font-size: 26px; font-weight: 700; letter-spacing: 0.04em; color: #F5C842; text-transform: uppercase; }
+    .header-sub { font-size: 15px; color: rgba(255,255,255,0.75); margin-top: 4px; }
+    .countdown-chip {
+      display: inline-block;
+      background: var(--terra);
+      color: white;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 3px 14px;
+      border-radius: 100px;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+
+    /* ── TAB NAV ── */
+    .tab-nav {
+      display: flex;
+      background: var(--navy-mid);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .tab-nav::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      flex: 1;
+      min-width: 60px;
+      padding: 12px 6px 10px;
+      background: none;
+      border: none;
+      border-bottom: 4px solid transparent;
+      color: rgba(255,255,255,0.55);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      text-align: center;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .tab-btn .ti { font-size: 22px; }
+    .tab-btn:hover { color: rgba(255,255,255,0.85); }
+    .tab-btn.active { color: white; }
+    .tab-btn[data-tab="travel"].active   { border-bottom-color: #F07050; }
+    .tab-btn[data-tab="packing"].active  { border-bottom-color: #F5C842; }
+    .tab-btn[data-tab="weather"].active  { border-bottom-color: #5BC8B8; }
+    .tab-btn[data-tab="dreams"].active   { border-bottom-color: #C084FC; }
+    .tab-btn[data-tab="todos"].active    { border-bottom-color: #6EE7A0; }
+
+    /* ── TAB PANELS ── */
+    .tab-panel { display: none; padding: 24px 16px 80px; max-width: 900px; margin: 0 auto; }
+    .tab-panel.active { display: block; }
+
+    /* ── TYPOGRAPHY ── */
+    .section-title { font-size: 26px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+    .section-sub { color: var(--text-light); font-size: 16px; margin-bottom: 24px; }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 22px;
+      border-radius: var(--radius-sm);
+      border: none;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: filter 0.15s, transform 0.1s;
+      min-height: 50px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn:hover { filter: brightness(0.92); }
+    .btn-primary  { background: var(--terra);   color: white; }
+    .btn-mustard  { background: var(--mustard); color: var(--navy); }
+    .btn-teal     { background: var(--teal);    color: white; }
+    .btn-purple   { background: var(--purple);  color: white; }
+    .btn-ghost    { background: transparent; color: var(--text-light); border: 2px solid var(--border); }
+    .btn-danger   { background: var(--danger);  color: white; }
+    .btn-sm       { padding: 8px 16px; font-size: 14px; min-height: 38px; }
+    .btn-full     { width: 100%; }
+
+    /* ── FORMS ── */
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-weight: 700; font-size: 16px; margin-bottom: 6px; color: var(--navy); }
+    input, select, textarea {
+      width: 100%;
+      padding: 13px 16px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 18px;
+      color: var(--text);
+      background: var(--white);
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+    }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(26,140,122,0.15); }
+    textarea { resize: vertical; min-height: 80px; }
+    .form-row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .form-row .form-group { flex: 1; min-width: 140px; }
+
+    /* ── BADGES ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 12px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .badge-high   { background: var(--terra-light);  color: var(--terra); }
+    .badge-medium { background: var(--mustard-light); color: #8A5E00; }
+    .badge-low    { background: #E0F5E8; color: var(--success); }
+    .badge-done   { background: #E0F5E8; color: var(--success); }
+
+    /* ── FAMILY SELECTOR ── */
+    .family-tabs { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+    .family-tab {
+      padding: 12px 22px;
+      border-radius: 100px;
+      border: 2px solid var(--border);
+      background: white;
+      font-family: inherit;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      min-height: 50px;
+    }
+    .family-tab:hover { background: var(--sand); }
+    .family-tab.fs  { background: var(--terra);   color: white; border-color: var(--terra); }
+    .family-tab.fm  { background: var(--teal);    color: white; border-color: var(--teal); }
+    .family-tab.fpj { background: var(--purple);  color: white; border-color: var(--purple); }
+
+    /* ── PACKING ── */
+    .packing-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .packing-item:last-child { border-bottom: none; }
+    .packing-checkbox {
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
+      cursor: pointer;
+      accent-color: var(--teal);
+    }
+    .packing-item.packed .pack-text { text-decoration: line-through; color: var(--text-light); }
+    .pack-text { flex: 1; font-size: 17px; }
+    .cat-head { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-light); margin: 14px 0 4px; }
+    .progress-wrap { background: var(--border); border-radius: 100px; height: 14px; overflow: hidden; margin: 8px 0 4px; }
+    .progress-fill { height: 100%; border-radius: 100px; transition: width 0.4s ease; }
+
+    /* ── WEATHER ── */
+    .weather-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+    .w-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 20px 16px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .w-card.sea-day { background: linear-gradient(135deg, #D8EEFF, #B8D8F8); }
+    .w-date  { font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.06em; }
+    .w-port  { font-size: 17px; font-weight: 700; color: var(--navy); margin: 4px 0 2px; line-height: 1.3; }
+    .w-emoji { font-size: 42px; display: block; margin: 10px 0 6px; }
+    .w-temp  { font-size: 26px; font-weight: 700; color: var(--terra); }
+    .w-desc  { font-size: 13px; color: var(--text-light); margin-top: 4px; }
+
+    /* ── DREAMS ── */
+    .person-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px; }
+    .person-card { background: white; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+    .pc-head {
+      padding: 14px 18px;
+      font-weight: 700;
+      font-size: 18px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pc-head .fam-sub { font-size: 13px; font-weight: 500; opacity: 0.8; }
+    .pc-body { padding: 14px 18px; }
+    .dream-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .dream-row:last-of-type { border-bottom: none; }
+    .dream-star { font-size: 18px; flex-shrink: 0; }
+    .dream-body { flex: 1; }
+    .dream-txt  { font-size: 16px; line-height: 1.4; }
+    .dream-day  { font-size: 13px; font-weight: 700; color: var(--teal); margin-top: 2px; }
+    .dream-note { font-size: 13px; color: var(--text-light); }
+    .add-dream {
+      width: 100%;
+      padding: 11px;
+      background: var(--sand);
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 15px;
+      color: var(--text-light);
+      cursor: pointer;
+      margin-top: 12px;
+      font-weight: 700;
+      transition: all 0.15s;
+    }
+    .add-dream:hover { background: var(--mustard-light); border-color: var(--mustard); color: var(--navy); }
+
+    /* ── TO-DOs ── */
+    .todo-item {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px 18px;
+      margin-bottom: 12px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .t-bar { width: 5px; border-radius: 100px; flex-shrink: 0; align-self: stretch; min-height: 40px; }
+    .ph  .t-bar { background: var(--terra); }
+    .pm  .t-bar { background: var(--mustard); }
+    .pl  .t-bar { background: var(--success); }
+    .t-body { flex: 1; min-width: 0; }
+    .t-title { font-size: 18px; font-weight: 600; color: var(--navy); }
+    .t-done .t-title { text-decoration: line-through; opacity: 0.55; }
+    .t-meta { font-size: 14px; color: var(--text-light); margin-top: 4px; flex-wrap: wrap; display: flex; gap: 6px; align-items: center; }
+    .t-desc { font-size: 14px; color: var(--text-light); margin-top: 4px; }
+    .t-actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+    .status-btn {
+      padding: 7px 14px;
+      border-radius: 100px;
+      border: none;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      min-height: 36px;
+    }
+    .s-pending     { background: #EFEFEF; color: #555; }
+    .s-in_progress { background: var(--mustard-light); color: #7A5000; }
+    .s-done        { background: #E0F5E8; color: var(--success); }
+    .del-btn { background: none; border: none; cursor: pointer; font-size: 18px; color: var(--text-light); padding: 4px; min-width: 36px; min-height: 36px; text-align: center; border-radius: 6px; }
+    .del-btn:hover { background: var(--terra-light); color: var(--terra); }
+
+    /* ── FLIGHTS ── */
+    .flight-block {
+      border-left: 5px solid;
+      border-radius: var(--radius);
+      background: white;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    .flight-block-head {
+      padding: 14px 18px 12px;
+      font-weight: 700;
+      font-size: 17px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .flight-card {
+      padding: 16px 18px;
+      border-top: 1px solid var(--border);
+    }
+    .f-dir { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-light); margin-bottom: 6px; }
+    .f-route { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 700; color: var(--navy); }
+    .f-arrow { color: var(--terra); }
+    .f-detail { font-size: 15px; color: var(--text-light); margin-top: 6px; }
+
+    /* ── CRUISE BANNER ── */
+    .cruise-banner {
+      background: linear-gradient(135deg, var(--terra) 0%, #A83820 100%);
+      color: white;
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      margin-bottom: 28px;
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .cb-icon { font-size: 52px; }
+    .cb-title { font-size: 22px; font-weight: 700; line-height: 1.2; }
+    .cb-sub { opacity: 0.85; font-size: 15px; margin-top: 4px; }
+    .cb-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .cb-pill { background: rgba(255,255,255,0.2); padding: 4px 14px; border-radius: 100px; font-size: 13px; font-weight: 700; }
+
+    /* ── MODAL ── */
+    .modal-bg {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+    .modal-bg.hidden { display: none; }
+    .modal {
+      background: white;
+      border-radius: var(--radius);
+      padding: 28px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+    }
+    .modal h3 { font-size: 22px; font-weight: 700; color: var(--navy); margin-bottom: 20px; }
+    .modal-foot { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; flex-wrap: wrap; }
+
+    /* ── TOAST ── */
+    .toast-wrap { position: fixed; bottom: 24px; right: 20px; z-index: 2000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+    .toast {
+      background: var(--navy);
+      color: white;
+      padding: 13px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-weight: 600;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      animation: slideIn 0.3s ease;
+      pointer-events: auto;
+    }
+    .toast.ok  { background: var(--success); }
+    .toast.err { background: var(--danger); }
+    @keyframes slideIn {
+      from { transform: translateX(110%); opacity: 0; }
+      to   { transform: translateX(0);   opacity: 1; }
+    }
+
+    /* ── UTILS ── */
+    .empty-state { text-align: center; padding: 48px 20px; color: var(--text-light); }
+    .empty-icon  { font-size: 52px; margin-bottom: 12px; }
+    .loading     { text-align: center; padding: 48px; color: var(--text-light); font-size: 18px; }
+    hr.divider   { border: none; border-top: 2px solid var(--border); margin: 20px 0; }
+    .page-top    { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 6px; }
+
+    @media (max-width: 560px) {
+      .site-header .header-top h1 { font-size: 20px; }
+      .tab-btn { font-size: 10px; }
+      .cruise-banner { flex-direction: column; gap: 12px; }
+      .weather-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header class="site-header">
+  <div class="header-top">
+    <span style="font-size:28px">🚢</span>
+    <h1>Allure of the Seas</h1>
+  </div>
+  <div class="header-sub">
+    June 21–28, 2026 · Swansons · McNamaras · PJ
+    <span class="countdown-chip" id="countdown">Loading…</span>
+  </div>
+</header>
+
+<!-- ═══ TAB NAV ═══ -->
+<nav class="tab-nav">
+  <button class="tab-btn active" data-tab="travel">
+    <span class="ti">✈️</span>Travel
+  </button>
+  <button class="tab-btn" data-tab="packing">
+    <span class="ti">🧳</span>Packing
+  </button>
+  <button class="tab-btn" data-tab="weather">
+    <span class="ti">🌤️</span>Weather
+  </button>
+  <button class="tab-btn" data-tab="dreams">
+    <span class="ti">✨</span>Dreams
+  </button>
+  <button class="tab-btn" data-tab="todos">
+    <span class="ti">✅</span>To-Do
+  </button>
+</nav>
+
+<!-- ═══ MAIN ═══ -->
+<main>
+
+  <!-- ── TRAVEL TAB ── -->
+  <div class="tab-panel active" id="panel-travel">
+    <div class="cruise-banner">
+      <span class="cb-icon">🚢</span>
+      <div>
+        <div class="cb-title">Royal Caribbean · Allure of the Seas</div>
+        <div class="cb-sub">Departs Fort Lauderdale · June 21, 2026</div>
+        <div class="cb-pills">
+          <span class="cb-pill">🇯🇲 Falmouth, Jamaica</span>
+          <span class="cb-pill">🇧🇸 CocoCay</span>
+          <span class="cb-pill">🇧🇸 Nassau, Bahamas</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-top">
+      <div>
+        <div class="section-title">✈️ Flights</div>
+        <div class="section-sub">Inbound to Fort Lauderdale and flights home.</div>
+      </div>
+      <button class="btn btn-primary" onclick="openFlightModal()">+ Add Flight</button>
+    </div>
+
+    <div id="flights-list"><div class="loading">⏳ Loading…</div></div>
+  </div>
+
+  <!-- ── PACKING TAB ── -->
+  <div class="tab-panel" id="panel-packing">
+    <div class="section-title">🧳 Packing Lists</div>
+    <div class="section-sub">Check off items as you pack. Each family has their own list.</div>
+
+    <div class="family-tabs">
+      <button class="family-tab fs" data-family="Swanson"  onclick="selectFamily('Swanson')">🏄 Swansons</button>
+      <button class="family-tab"    data-family="McNamara" onclick="selectFamily('McNamara')">🌺 McNamaras</button>
+      <button class="family-tab"    data-family="PJ"       onclick="selectFamily('PJ')">🎉 PJ</button>
+    </div>
+
+    <div id="packing-content"><div class="loading">⏳ Loading…</div></div>
+  </div>
+
+  <!-- ── WEATHER TAB ── -->
+  <div class="tab-panel" id="panel-weather">
+    <div class="section-title">🌤️ Port-by-Port Weather</div>
+    <div class="section-sub">Forecast for each stop. Check back closer to departure for the most accurate forecast!</div>
+    <div class="weather-grid" id="weather-grid"><div class="loading" style="grid-column:1/-1">⏳ Loading forecasts…</div></div>
+    <p id="weather-note" style="text-align:center;font-size:14px;color:var(--text-light);margin-top:16px;display:none">
+      ℹ️ Forecasts from Open-Meteo. Accuracy improves within 7 days of the trip.
+    </p>
+  </div>
+
+  <!-- ── DREAMS TAB ── -->
+  <div class="tab-panel" id="panel-dreams">
+    <div class="section-title">✨ Dream List</div>
+    <div class="section-sub">Each person shares up to 2 things they're most excited about. We'll make them happen!</div>
+    <div class="person-grid" id="dreams-grid"><div class="loading">⏳ Loading…</div></div>
+
+    <div id="all-dreams-section" style="display:none;margin-top:32px">
+      <div class="section-title" style="font-size:20px;margin-bottom:12px">📅 All Dreams at a Glance</div>
+      <div id="all-dreams-list"></div>
+    </div>
+  </div>
+
+  <!-- ── TO-DO TAB ── -->
+  <div class="tab-panel" id="panel-todos">
+    <div class="page-top">
+      <div>
+        <div class="section-title">✅ To-Do List</div>
+        <div class="section-sub">Everything that needs to get done before and during the trip.</div>
+      </div>
+      <button class="btn btn-primary" onclick="openTodoModal()">+ Add Task</button>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm active-filter" id="f-all"     onclick="filterTodos('all')">All</button>
+      <button class="btn btn-ghost btn-sm" id="f-high"    onclick="filterTodos('high')">🔴 High Priority</button>
+      <button class="btn btn-ghost btn-sm" id="f-pending" onclick="filterTodos('pending')">⏳ Pending</button>
+      <button class="btn btn-ghost btn-sm" id="f-done"    onclick="filterTodos('done')">✅ Done</button>
+    </div>
+
+    <div id="todos-list"><div class="loading">⏳ Loading…</div></div>
+  </div>
+
+</main>
+
+<!-- ═══ MODALS ═══ -->
+
+<!-- Flight Modal -->
+<div class="modal-bg hidden" id="m-flight">
+  <div class="modal">
+    <h3>✈️ Add a Flight</h3>
+    <div class="form-group">
+      <label>Which family?</label>
+      <select id="f-fam">
+        <option value="Swanson">🏄 Swanson Family</option>
+        <option value="McNamara">🌺 McNamara Family</option>
+        <option value="PJ">🎉 PJ</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Direction</label>
+      <select id="f-dir">
+        <option value="inbound">🛬 Inbound — Flying TO Fort Lauderdale</option>
+        <option value="outbound">🛫 Outbound — Flying HOME after the cruise</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Airline</label>
+        <input type="text" id="f-airline" placeholder="e.g. Delta">
+      </div>
+      <div class="form-group">
+        <label>Flight #</label>
+        <input type="text" id="f-num" placeholder="e.g. DL 442">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Departs From</label>
+        <input type="text" id="f-from" placeholder="e.g. Boston">
+      </div>
+      <div class="form-group">
+        <label>Departure Time</label>
+        <input type="datetime-local" id="f-dep">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Arrives In</label>
+        <input type="text" id="f-to" placeholder="e.g. Fort Lauderdale">
+      </div>
+      <div class="form-group">
+        <label>Arrival Time</label>
+        <input type="datetime-local" id="f-arr">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Notes <span style="font-weight:400;color:var(--text-light)">(optional)</span></label>
+      <input type="text" id="f-notes" placeholder="e.g. Terminal 2, check bags early">
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-flight')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveFlight()">Save Flight ✈️</button>
+    </div>
+  </div>
+</div>
+
+<!-- Packing Modal -->
+<div class="modal-bg hidden" id="m-packing">
+  <div class="modal">
+    <h3>🧳 Add Packing Item</h3>
+    <div class="form-group">
+      <label>Who is this for?</label>
+      <select id="p-person"></select>
+    </div>
+    <div class="form-group">
+      <label>Item</label>
+      <input type="text" id="p-item" placeholder="e.g. Sunscreen SPF 50">
+    </div>
+    <div class="form-group">
+      <label>Category</label>
+      <select id="p-cat">
+        <option value="Clothes">👕 Clothes</option>
+        <option value="Toiletries">🧴 Toiletries</option>
+        <option value="Documents">📄 Documents & ID</option>
+        <option value="Electronics">📱 Electronics</option>
+        <option value="Beach & Pool">🏖️ Beach & Pool</option>
+        <option value="Health">💊 Health & Medicine</option>
+        <option value="Entertainment">🎮 Entertainment</option>
+        <option value="General">📦 General</option>
+      </select>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-packing')">Cancel</button>
+      <button class="btn btn-mustard" onclick="savePackingItem()">Add to List 🧳</button>
+    </div>
+  </div>
+</div>
+
+<!-- Dream Modal -->
+<div class="modal-bg hidden" id="m-dream">
+  <div class="modal">
+    <h3 id="dream-modal-title">✨ Add a Dream</h3>
+    <input type="hidden" id="d-person">
+    <input type="hidden" id="d-family">
+    <div class="form-group">
+      <label>What's your dream for this trip?</label>
+      <textarea id="d-dream" placeholder="e.g. Swim with stingrays at CocoCay, try jerk chicken in Jamaica, see the ship's Broadway show…"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Assign to a day <span style="font-weight:400;color:var(--text-light)">(optional)</span></label>
+      <select id="d-day">
+        <option value="">Not scheduled yet</option>
+        <option value="June 21 — Departure Day">June 21 — Departure Day (Fort Lauderdale)</option>
+        <option value="June 22 — Day at Sea">June 22 — Day at Sea</option>
+        <option value="June 23 — Falmouth, Jamaica">June 23 — Falmouth, Jamaica 🇯🇲</option>
+        <option value="June 24 — Day at Sea">June 24 — Day at Sea</option>
+        <option value="June 25 — CocoCay">June 25 — CocoCay, Bahamas 🇧🇸</option>
+        <option value="June 26 — Nassau">June 26 — Nassau, Bahamas 🇧🇸</option>
+        <option value="June 27 — Day at Sea">June 27 — Day at Sea</option>
+        <option value="June 28 — Return Day">June 28 — Return Day</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Notes <span style="font-weight:400;color:var(--text-light)">(optional)</span></label>
+      <input type="text" id="d-notes" placeholder="e.g. Need to book in advance">
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-dream')">Cancel</button>
+      <button class="btn btn-mustard" onclick="saveDream()">Save Dream ✨</button>
+    </div>
+  </div>
+</div>
+
+<!-- Todo Modal -->
+<div class="modal-bg hidden" id="m-todo">
+  <div class="modal">
+    <h3>✅ Add a Task</h3>
+    <div class="form-group">
+      <label>Task Title</label>
+      <input type="text" id="t-title" placeholder="e.g. Buy travel insurance">
+    </div>
+    <div class="form-group">
+      <label>Details <span style="font-weight:400;color:var(--text-light)">(optional)</span></label>
+      <textarea id="t-desc" placeholder="Any extra info…" style="min-height:60px"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Priority</label>
+        <select id="t-pri">
+          <option value="high">🔴 High — Must Do</option>
+          <option value="medium" selected>🟡 Medium</option>
+          <option value="low">🟢 Low — Nice to Do</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Assign To</label>
+        <select id="t-assign">
+          <option value="">Anyone</option>
+          <option value="All Families">All Families</option>
+          <option value="Swanson Family">Swanson Family</option>
+          <option value="McNamara Family">McNamara Family</option>
+          <option value="PJ">PJ</option>
+          <option value="Michelle">Michelle</option>
+          <option value="Jeremy">Jeremy</option>
+          <option value="Rob">Rob</option>
+          <option value="Bree">Bree</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Due Date <span style="font-weight:400;color:var(--text-light)">(optional)</span></label>
+      <input type="date" id="t-due">
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-todo')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTodo()">Add Task ✅</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-wrap" id="toasts"></div>
+
+<!-- ═══ SCRIPT ═══ -->
+<script>
+const { createClient } = supabase;
+const sb = createClient(
+  'https://viudclgcdsskzlfosflg.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpdWRjbGdjZHNza3psZm9zZmxnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1MzkzNjIsImV4cCI6MjA5MDExNTM2Mn0.xGxMDVRRrlewP17cshC7ipx9V7uKbvzW-9iOguZnUiM'
+);
+
+// ── CONSTANTS ──
+const FAMILIES = {
+  Swanson:  { members: ['Swanson Family', 'Michelle', 'Jeremy', 'Audrey', 'Beau'],  bg: '#D04A28', light: '#FDEAE5' },
+  McNamara: { members: ['McNamara Family', 'Rob', 'Bree', 'Finn', 'May', 'Emmy'],  bg: '#1A8C7A', light: '#E0F4F1' },
+  PJ:       { members: ['PJ'],                                                       bg: '#7C3AED', light: '#F3EEFF' },
+};
+
+const PEOPLE = [
+  { person: 'Michelle', family: 'Swanson' },
+  { person: 'Jeremy',   family: 'Swanson' },
+  { person: 'Audrey',   family: 'Swanson' },
+  { person: 'Beau',     family: 'Swanson' },
+  { person: 'Rob',      family: 'McNamara' },
+  { person: 'Bree',     family: 'McNamara' },
+  { person: 'Finn',     family: 'McNamara' },
+  { person: 'May',      family: 'McNamara' },
+  { person: 'Emmy',     family: 'McNamara' },
+  { person: 'PJ',       family: 'PJ' },
+];
+
+const ITINERARY = [
+  { date:'2026-06-21', label:'Jun 21', port:'Fort Lauderdale',   emoji:'🇺🇸', sea:false, lat:26.1224, lon:-80.1373 },
+  { date:'2026-06-22', label:'Jun 22', port:'Day at Sea',        emoji:'🌊', sea:true },
+  { date:'2026-06-23', label:'Jun 23', port:'Falmouth, Jamaica', emoji:'🇯🇲', sea:false, lat:18.4953, lon:-77.6614 },
+  { date:'2026-06-24', label:'Jun 24', port:'Day at Sea',        emoji:'🌊', sea:true },
+  { date:'2026-06-25', label:'Jun 25', port:'CocoCay, Bahamas',  emoji:'🇧🇸', sea:false, lat:25.8313, lon:-77.9115 },
+  { date:'2026-06-26', label:'Jun 26', port:'Nassau, Bahamas',   emoji:'🇧🇸', sea:false, lat:25.0480, lon:-77.3580 },
+  { date:'2026-06-27', label:'Jun 27', port:'Day at Sea',        emoji:'🌊', sea:true },
+  { date:'2026-06-28', label:'Jun 28', port:'Fort Lauderdale',   emoji:'🇺🇸', sea:false, lat:26.1224, lon:-80.1373 },
+];
+
+const WMO = {
+  0:{d:'Clear Sky',emoji:'☀️'}, 1:{d:'Mainly Clear',emoji:'🌤️'}, 2:{d:'Partly Cloudy',emoji:'⛅'},
+  3:{d:'Overcast',emoji:'☁️'}, 45:{d:'Foggy',emoji:'🌫️'}, 48:{d:'Icy Fog',emoji:'🌫️'},
+  51:{d:'Light Drizzle',emoji:'🌦️'}, 53:{d:'Drizzle',emoji:'🌦️'}, 55:{d:'Heavy Drizzle',emoji:'🌧️'},
+  61:{d:'Light Rain',emoji:'🌧️'}, 63:{d:'Rain',emoji:'🌧️'}, 65:{d:'Heavy Rain',emoji:'🌧️'},
+  80:{d:'Showers',emoji:'🌦️'}, 81:{d:'Showers',emoji:'🌦️'}, 82:{d:'Heavy Showers',emoji:'⛈️'},
+  95:{d:'Thunderstorm',emoji:'⛈️'}, 96:{d:'Thunderstorm',emoji:'⛈️'}, 99:{d:'Thunderstorm',emoji:'⛈️'},
+};
+
+// ── STATE ──
+let curFamily = 'Swanson';
+let curFilter = 'all';
+let allTodos  = [];
+let allFlights = [];
+let allDreams  = [];
+
+// ── COUNTDOWN ──
+function updateCountdown() {
+  const dep = new Date('2026-06-21T00:00:00');
+  const now = new Date();
+  const diff = dep - now;
+  if (diff <= 0) { document.getElementById('countdown').textContent = '🎉 Bon Voyage!'; return; }
+  const days = Math.ceil(diff / 86400000);
+  document.getElementById('countdown').textContent = `${days} day${days===1?'':'s'} to go!`;
+}
+
+// ── TOAST ──
+function toast(msg, type='ok') {
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  document.getElementById('toasts').appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+// ── TABS ──
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ── MODALS ──
+function openModal(id)  { document.getElementById(id).classList.remove('hidden'); }
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+document.querySelectorAll('.modal-bg').forEach(bg => {
+  bg.addEventListener('click', e => { if (e.target === bg) bg.classList.add('hidden'); });
+});
+
+// ══════════════════════════════════════════
+// TRAVEL TAB
+// ══════════════════════════════════════════
+function openFlightModal() { openModal('m-flight'); }
+
+async function loadFlights() {
+  const { data } = await sb.from('vacation_flights').select('*').order('direction').order('created_at');
+  allFlights = data || [];
+  renderFlights();
+}
+
+function fmt(dt) {
+  if (!dt) return '';
+  return new Date(dt).toLocaleString('en-US', { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
+}
+
+function renderFlights() {
+  const el = document.getElementById('flights-list');
+  if (!allFlights.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">✈️</div><p>No flights added yet.<br>Add your travel details above!</p></div>`;
+    return;
+  }
+  let html = '';
+  for (const [fam, cfg] of Object.entries(FAMILIES)) {
+    const fFlights = allFlights.filter(f => f.family === fam);
+    if (!fFlights.length) continue;
+    html += `<div class="flight-block" style="border-left-color:${cfg.bg}">
+      <div class="flight-block-head" style="background:${cfg.bg}">
+        <span>${fam} Family</span>
+        <span style="font-size:14px;opacity:0.85">${fFlights.length} flight${fFlights.length>1?'s':''}</span>
+      </div>`;
+    for (const f of fFlights) {
+      html += `<div class="flight-card">
+        <div class="f-dir">${f.direction==='inbound'?'🛬 Inbound → Fort Lauderdale':'🛫 Outbound → Flying Home'}</div>
+        <div class="f-route">
+          <span>${f.departure_city||'—'}</span>
+          <span class="f-arrow">→</span>
+          <span>${f.arrival_city||'—'}</span>
+        </div>
+        <div class="f-detail">
+          ${f.airline||''}${f.flight_number?' · '+f.flight_number:''}
+          ${f.departure_time?' · '+fmt(f.departure_time):''}
+          ${f.arrival_time?' → '+fmt(f.arrival_time):''}
+          ${f.notes?'<br>📝 '+f.notes:''}
+        </div>
+        <button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="delFlight('${f.id}')">🗑️ Remove</button>
+      </div>`;
+    }
+    html += '</div>';
+  }
+  el.innerHTML = html;
+}
+
+async function saveFlight() {
+  const payload = {
+    family:          document.getElementById('f-fam').value,
+    direction:       document.getElementById('f-dir').value,
+    airline:         document.getElementById('f-airline').value,
+    flight_number:   document.getElementById('f-num').value,
+    departure_city:  document.getElementById('f-from').value,
+    departure_time:  document.getElementById('f-dep').value || null,
+    arrival_city:    document.getElementById('f-to').value,
+    arrival_time:    document.getElementById('f-arr').value || null,
+    notes:           document.getElementById('f-notes').value,
+  };
+  const { error } = await sb.from('vacation_flights').insert(payload);
+  if (error) { toast('Error saving flight','err'); return; }
+  toast('Flight added! ✈️');
+  closeModal('m-flight');
+  document.querySelectorAll('#m-flight input').forEach(i => i.value='');
+  loadFlights();
+}
+
+async function delFlight(id) {
+  if (!confirm('Remove this flight?')) return;
+  await sb.from('vacation_flights').delete().eq('id', id);
+  toast('Flight removed');
+  loadFlights();
+}
+
+// ══════════════════════════════════════════
+// PACKING TAB
+// ══════════════════════════════════════════
+function selectFamily(fam) {
+  curFamily = fam;
+  document.querySelectorAll('.family-tab').forEach(t => {
+    t.className = 'family-tab';
+    if (t.dataset.family === fam) {
+      if (fam==='Swanson') t.classList.add('fs');
+      else if (fam==='McNamara') t.classList.add('fm');
+      else t.classList.add('fpj');
+    }
+  });
+  loadPacking(fam);
+}
+
+async function loadPacking(fam) {
+  document.getElementById('packing-content').innerHTML = '<div class="loading">⏳ Loading…</div>';
+  const { data } = await sb.from('vacation_packing').select('*').eq('family', fam).order('created_at');
+  renderPacking(fam, data || []);
+}
+
+function renderPacking(fam, items) {
+  const cfg = FAMILIES[fam];
+  const el  = document.getElementById('packing-content');
+  const tot = items.length;
+  const done = items.filter(i => i.packed).length;
+  const pct  = tot ? Math.round((done/tot)*100) : 0;
+
+  let html = `<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <span style="font-weight:600;color:var(--navy)">${done} of ${tot} items packed</span>
+      <span style="font-size:28px;font-weight:700;color:${cfg.bg}">${pct}%</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-fill" style="width:${pct}%;background:${cfg.bg}"></div>
+    </div>
+  </div>`;
+
+  const members = cfg.members;
+  for (const m of members) {
+    const mItems = items.filter(i => i.person === m);
+    html += `<div class="card">
+      <div class="card-title">
+        ${m}
+        <button class="btn btn-sm" style="background:${cfg.light};color:${cfg.bg};border:none;font-weight:700;cursor:pointer;padding:8px 16px;border-radius:8px" onclick="openPackModal('${fam}','${m}')">+ Add</button>
+      </div>`;
+
+    if (!mItems.length) {
+      html += `<p style="color:var(--text-light);font-style:italic">Nothing added yet — click Add to start!</p>`;
+    } else {
+      const byCat = {};
+      mItems.forEach(i => { if(!byCat[i.category]) byCat[i.category]=[]; byCat[i.category].push(i); });
+      for (const [cat, catItems] of Object.entries(byCat)) {
+        html += `<div class="cat-head">${cat}</div>`;
+        catItems.forEach(i => {
+          html += `<div class="packing-item ${i.packed?'packed':''}" id="pi-${i.id}">
+            <input type="checkbox" class="packing-checkbox" ${i.packed?'checked':''} onchange="togglePacked('${i.id}',this.checked,'${fam}')">
+            <span class="pack-text">${i.item}</span>
+            <button onclick="delPacking('${i.id}','${fam}')" class="del-btn">×</button>
+          </div>`;
+        });
+      }
+    }
+    html += '</div>';
+  }
+
+  html += `<button class="btn btn-mustard btn-full" onclick="openPackModal('${fam}','${members[0]}')">+ Add Item for ${fam} Family</button>`;
+  el.innerHTML = html;
+}
+
+function openPackModal(fam, person) {
+  const sel = document.getElementById('p-person');
+  sel.innerHTML = FAMILIES[fam].members.map(m => `<option value="${m}" ${m===person?'selected':''}>${m}</option>`).join('');
+  document.getElementById('p-item').value = '';
+  openModal('m-packing');
+}
+
+async function savePackingItem() {
+  const item = document.getElementById('p-item').value.trim();
+  if (!item) { toast('Please enter an item name','err'); return; }
+  const { error } = await sb.from('vacation_packing').insert({
+    family: curFamily,
+    person: document.getElementById('p-person').value,
+    item,
+    category: document.getElementById('p-cat').value,
+    packed: false,
+  });
+  if (error) { toast('Error saving item','err'); return; }
+  toast('Item added! 🧳');
+  closeModal('m-packing');
+  loadPacking(curFamily);
+}
+
+async function togglePacked(id, packed, fam) {
+  await sb.from('vacation_packing').update({ packed }).eq('id', id);
+  const row = document.getElementById(`pi-${id}`);
+  if (row) row.className = `packing-item ${packed?'packed':''}`;
+  loadPacking(fam);
+}
+
+async function delPacking(id, fam) {
+  await sb.from('vacation_packing').delete().eq('id', id);
+  toast('Item removed');
+  loadPacking(fam);
+}
+
+// ══════════════════════════════════════════
+// WEATHER TAB
+// ══════════════════════════════════════════
+async function loadWeather() {
+  const grid = document.getElementById('weather-grid');
+  grid.innerHTML = '';
+  let anyForecast = false;
+
+  for (const stop of ITINERARY) {
+    const card = document.createElement('div');
+    card.className = 'w-card' + (stop.sea ? ' sea-day' : '');
+
+    if (stop.sea) {
+      card.innerHTML = `
+        <div class="w-date">${stop.label}</div>
+        <div class="w-port">Day at Sea</div>
+        <span class="w-emoji">🌊</span>
+        <div class="w-desc">Relax & explore the ship!</div>`;
+      grid.appendChild(card);
+      continue;
+    }
+
+    card.innerHTML = `
+      <div class="w-date">${stop.label}</div>
+      <div class="w-port">${stop.emoji} ${stop.port}</div>
+      <span class="w-emoji">⏳</span>
+      <div class="w-desc">Fetching…</div>`;
+    grid.appendChild(card);
+
+    try {
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${stop.lat}&longitude=${stop.lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode&temperature_unit=fahrenheit&timezone=auto&start_date=${stop.date}&end_date=${stop.date}`;
+      const res  = await fetch(url);
+      const json = await res.json();
+      const d    = json.daily;
+
+      if (d && d.temperature_2m_max && d.temperature_2m_max.length > 0) {
+        const hi    = Math.round(d.temperature_2m_max[0]);
+        const lo    = Math.round(d.temperature_2m_min[0]);
+        const code  = d.weathercode[0];
+        const rain  = d.precipitation_sum[0];
+        const wmo   = WMO[code] || {d:'Variable', emoji:'🌤️'};
+        anyForecast = true;
+        card.innerHTML = `
+          <div class="w-date">${stop.label}</div>
+          <div class="w-port">${stop.emoji} ${stop.port}</div>
+          <span class="w-emoji">${wmo.emoji}</span>
+          <div class="w-temp">${hi}° / ${lo}°F</div>
+          <div class="w-desc">${wmo.d}${rain>0?' · 💧'+rain.toFixed(1)+'mm':''}</div>`;
+      } else {
+        card.innerHTML = `
+          <div class="w-date">${stop.label}</div>
+          <div class="w-port">${stop.emoji} ${stop.port}</div>
+          <span class="w-emoji">📅</span>
+          <div class="w-desc">Forecast available closer to departure!</div>`;
+      }
+    } catch(e) {
+      card.innerHTML = `
+        <div class="w-date">${stop.label}</div>
+        <div class="w-port">${stop.emoji} ${stop.port}</div>
+        <span class="w-emoji">🌐</span>
+        <div class="w-desc">Could not load forecast</div>`;
+    }
+  }
+
+  document.getElementById('weather-note').style.display = 'block';
+}
+
+// ══════════════════════════════════════════
+// DREAMS TAB
+// ══════════════════════════════════════════
+async function loadDreams() {
+  const { data } = await sb.from('vacation_dreams').select('*').order('created_at');
+  allDreams = data || [];
+  renderDreams();
+}
+
+function renderDreams() {
+  const grid = document.getElementById('dreams-grid');
+  let html = '';
+
+  for (const { person, family } of PEOPLE) {
+    const dreams = allDreams.filter(d => d.person === person);
+    const cfg    = FAMILIES[family];
+    const canAdd = dreams.length < 2;
+
+    html += `<div class="person-card">
+      <div class="pc-head" style="background:${cfg.bg}">
+        <span>${person}</span>
+        <span class="fam-sub">${family} Family</span>
+      </div>
+      <div class="pc-body">`;
+
+    if (!dreams.length) {
+      html += `<p style="color:var(--text-light);font-style:italic;margin-bottom:8px">No dreams added yet!</p>`;
+    }
+
+    dreams.forEach(d => {
+      html += `<div class="dream-row">
+        <span class="dream-star">⭐</span>
+        <div class="dream-body">
+          <div class="dream-txt">${d.dream}</div>
+          ${d.assigned_day ? `<div class="dream-day">📅 ${d.assigned_day}</div>` : ''}
+          ${d.notes ? `<div class="dream-note">${d.notes}</div>` : ''}
+        </div>
+        <button onclick="delDream('${d.id}')" class="del-btn">×</button>
+      </div>`;
+    });
+
+    if (canAdd) {
+      html += `<button class="add-dream" onclick="openDreamModal('${person}','${family}')">
+        ✨ Add dream${dreams.length===1?' (1 more allowed)':' (up to 2)'}
+      </button>`;
+    } else {
+      html += `<p style="text-align:center;font-size:13px;color:var(--teal);font-weight:700;margin-top:10px">✅ Dreams captured!</p>`;
+    }
+
+    html += `</div></div>`;
+  }
+
+  grid.innerHTML = html;
+
+  // All-dreams summary
+  const scheduled = allDreams.filter(d => d.assigned_day);
+  const unscheduled = allDreams.filter(d => !d.assigned_day);
+  if (allDreams.length > 0) {
+    document.getElementById('all-dreams-section').style.display = 'block';
+    let sumHtml = '';
+    if (scheduled.length) {
+      sumHtml += `<p style="font-weight:700;color:var(--navy);margin-bottom:8px">📅 Scheduled Dreams</p>`;
+      scheduled.forEach(d => {
+        const cfg = FAMILIES[d.family];
+        sumHtml += `<div class="card" style="border-left:4px solid ${cfg.bg};margin-bottom:8px;padding:12px 16px">
+          <span style="font-weight:700;color:${cfg.bg}">${d.person}</span> · ${d.dream}
+          <div style="font-size:13px;color:var(--teal);font-weight:700;margin-top:4px">📅 ${d.assigned_day}</div>
+        </div>`;
+      });
+    }
+    if (unscheduled.length) {
+      sumHtml += `<p style="font-weight:700;color:var(--navy);margin:16px 0 8px">🕐 Not Yet Scheduled</p>`;
+      unscheduled.forEach(d => {
+        const cfg = FAMILIES[d.family];
+        sumHtml += `<div class="card" style="border-left:4px solid ${cfg.bg};margin-bottom:8px;padding:12px 16px">
+          <span style="font-weight:700;color:${cfg.bg}">${d.person}</span> · ${d.dream}
+        </div>`;
+      });
+    }
+    document.getElementById('all-dreams-list').innerHTML = sumHtml;
+  } else {
+    document.getElementById('all-dreams-section').style.display = 'none';
+  }
+}
+
+function openDreamModal(person, family) {
+  document.getElementById('d-person').value = person;
+  document.getElementById('d-family').value = family;
+  document.getElementById('d-dream').value  = '';
+  document.getElementById('d-notes').value  = '';
+  document.getElementById('d-day').value    = '';
+  document.getElementById('dream-modal-title').textContent = `✨ ${person}'s Dream`;
+  openModal('m-dream');
+}
+
+async function saveDream() {
+  const dream = document.getElementById('d-dream').value.trim();
+  if (!dream) { toast('Please describe your dream!','err'); return; }
+  const { error } = await sb.from('vacation_dreams').insert({
+    person:       document.getElementById('d-person').value,
+    family:       document.getElementById('d-family').value,
+    dream,
+    assigned_day: document.getElementById('d-day').value  || null,
+    notes:        document.getElementById('d-notes').value || null,
+  });
+  if (error) { toast('Error saving dream','err'); return; }
+  toast('Dream saved! ✨');
+  closeModal('m-dream');
+  loadDreams();
+}
+
+async function delDream(id) {
+  if (!confirm('Remove this dream?')) return;
+  await sb.from('vacation_dreams').delete().eq('id', id);
+  toast('Dream removed');
+  loadDreams();
+}
+
+// ══════════════════════════════════════════
+// TO-DO TAB
+// ══════════════════════════════════════════
+function openTodoModal() {
+  document.getElementById('t-title').value = '';
+  document.getElementById('t-desc').value  = '';
+  document.getElementById('t-due').value   = '';
+  document.getElementById('t-pri').value   = 'medium';
+  document.getElementById('t-assign').value = '';
+  openModal('m-todo');
+}
+
+async function loadTodos() {
+  const { data } = await sb.from('vacation_todos').select('*').order('created_at');
+  allTodos = data || [];
+  renderTodos();
+}
+
+function filterTodos(f) {
+  curFilter = f;
+  document.querySelectorAll('[id^="f-"]').forEach(b => {
+    b.style.background = '';
+    b.style.color = '';
+    b.classList.remove('active-filter');
+  });
+  const btn = document.getElementById('f-' + f);
+  if (btn) { btn.style.background='var(--navy)'; btn.style.color='white'; }
+  renderTodos();
+}
+
+function renderTodos() {
+  const el = document.getElementById('todos-list');
+  const PORD = { high:0, medium:1, low:2 };
+  const SL   = { pending:'To Do', in_progress:'In Progress', done:'Done ✅' };
+  const SN   = { pending:'in_progress', in_progress:'done', done:'pending' };
+
+  let list = [...allTodos];
+  if (curFilter==='high')    list = list.filter(t => t.priority==='high');
+  if (curFilter==='pending') list = list.filter(t => t.status!=='done');
+  if (curFilter==='done')    list = list.filter(t => t.status==='done');
+  list.sort((a,b) => (PORD[a.priority]-PORD[b.priority]) || new Date(a.created_at)-new Date(b.created_at));
+
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">✅</div><p>Nothing here — add a task above!</p></div>`;
+    return;
+  }
+
+  el.innerHTML = list.map(t => `
+    <div class="todo-item p${t.priority[0]} ${t.status==='done'?'t-done':''}" id="td-${t.id}">
+      <div class="t-bar"></div>
+      <div class="t-body">
+        <div class="t-title">${t.title}</div>
+        <div class="t-meta">
+          ${t.assigned_to?`<span>👤 ${t.assigned_to}</span>`:''}
+          ${t.due_date?`<span>📅 Due ${new Date(t.due_date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>`:''}
+          <span class="badge badge-${t.priority}">${t.priority.charAt(0).toUpperCase()+t.priority.slice(1)}</span>
+        </div>
+        ${t.description?`<div class="t-desc">${t.description}</div>`:''}
+      </div>
+      <div class="t-actions">
+        <button class="status-btn s-${t.status}" onclick="cycleTodo('${t.id}','${SN[t.status]}')">${SL[t.status]}</button>
+        <button class="del-btn" onclick="delTodo('${t.id}')">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+
+async function saveTodo() {
+  const title = document.getElementById('t-title').value.trim();
+  if (!title) { toast('Please enter a task title','err'); return; }
+  const { error } = await sb.from('vacation_todos').insert({
+    title,
+    description: document.getElementById('t-desc').value,
+    priority:    document.getElementById('t-pri').value,
+    assigned_to: document.getElementById('t-assign').value,
+    due_date:    document.getElementById('t-due').value || null,
+    status:      'pending',
+  });
+  if (error) { toast('Error saving task','err'); return; }
+  toast('Task added! ✅');
+  closeModal('m-todo');
+  loadTodos();
+}
+
+async function cycleTodo(id, next) {
+  await sb.from('vacation_todos').update({ status:next }).eq('id', id);
+  loadTodos();
+}
+
+async function delTodo(id) {
+  if (!confirm('Remove this task?')) return;
+  await sb.from('vacation_todos').delete().eq('id', id);
+  toast('Task removed');
+  loadTodos();
+}
+
+// ── FIX CSS class names for priority bars ──
+// ph/pm/pl map to p + first letter
+document.querySelectorAll('.todo-item').forEach(() => {});
+// Override via dynamic classes
+const styleEl = document.createElement('style');
+styleEl.textContent = `
+  .todo-item.ph .t-bar { background: var(--terra); }
+  .todo-item.pm .t-bar { background: var(--mustard); }
+  .todo-item.pl .t-bar { background: var(--success); }
+`;
+document.head.appendChild(styleEl);
+
+// ── INIT ──
+(async function init() {
+  updateCountdown();
+  setInterval(updateCountdown, 60000);
+  await Promise.all([loadFlights(), loadPacking('Swanson'), loadDreams(), loadTodos()]);
+  loadWeather();
+  filterTodos('all');
+})();
+</script>
+</body>
+</html>
