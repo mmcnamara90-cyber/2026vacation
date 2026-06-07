@@ -755,9 +755,9 @@
   <div class="tab-panel" id="panel-dreams">
     <div class="section-title">✨ Dream List</div>
     <div class="section-sub">Up to 3 dreams per person. Link matching dreams or join someone else's activity — joining doesn't count toward your cap.</div>
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;background:var(--sand);border-radius:var(--radius-sm);padding:10px 14px">
-      <span style="font-size:14px;font-weight:700;color:var(--navy);white-space:nowrap">👤 I am:</span>
-      <select id="dream-viewer" onchange="renderDreams()" style="font-size:15px;font-weight:600;border:none;background:transparent;color:var(--navy);flex:1"></select>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;background:var(--navy);border-radius:var(--radius-sm);padding:12px 16px;box-shadow:var(--shadow)">
+      <span style="font-size:14px;font-weight:700;color:rgba(255,255,255,0.75);white-space:nowrap">👤 I am:</span>
+      <select id="dream-viewer" onchange="renderDreams()" style="font-size:16px;font-weight:700;border:none;background:transparent;color:#F5C842;flex:1;cursor:pointer"></select>
     </div>
     <div class="person-grid" id="dreams-grid"><div class="loading">⏳ Loading…</div></div>
 
@@ -1121,7 +1121,7 @@
         <option value="Swanson Family">Swanson Family</option>
         <option value="McNamara Family">McNamara Family</option>
         <option value="PJ">PJ</option>
-        <option value="Michelle">Michelle</option>
+        <option value="Michelle McNamara">Michelle McNamara</option>
         <option value="Jeremy">Jeremy</option>
         <option value="Rob">Rob</option>
         <option value="Bree">Bree</option>
@@ -1183,13 +1183,13 @@ const sb = createClient(
 
 // ── CONSTANTS ──
 const FAMILIES = {
-  Swanson:  { members: ['Swanson Family', 'Michelle', 'Jeremy', 'Audrey', 'Beau'],  bg: '#D04A28', light: '#FDEAE5' },
+  Swanson:  { members: ['Swanson Family', 'Michelle McNamara', 'Jeremy', 'Audrey', 'Beau'],  bg: '#D04A28', light: '#FDEAE5' },
   McNamara: { members: ['McNamara Family', 'Rob', 'Bree', 'Finn', 'May', 'Emmy'],  bg: '#1A8C7A', light: '#E0F4F1' },
   PJ:       { members: ['PJ'],                                                       bg: '#7C3AED', light: '#F3EEFF' },
 };
 
 const PEOPLE = [
-  { person: 'Michelle', family: 'Swanson' },
+  { person: 'Michelle McNamara', family: 'Swanson' },
   { person: 'Jeremy',   family: 'Swanson' },
   { person: 'Audrey',   family: 'Swanson' },
   { person: 'Beau',     family: 'Swanson' },
@@ -2049,8 +2049,8 @@ function renderDreams() {
   if (viewerEl && !viewerEl.options.length) {
     viewerEl.innerHTML = PEOPLE.map(p => `<option value="${p.person}">${p.person} (${p.family})</option>`).join('');
     // Default to Michelle McNamara
-    const michelle = PEOPLE.find(p => p.person === 'Michelle');
-    if (michelle) viewerEl.value = 'Michelle';
+    const michelle = PEOPLE.find(p => p.person === 'Michelle McNamara');
+    if (michelle) viewerEl.value = 'Michelle McNamara';
   }
   const viewer = viewerEl ? viewerEl.value : '';
   const viewerPerson = PEOPLE.find(p => p.person === viewer);
