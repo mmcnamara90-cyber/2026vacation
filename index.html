@@ -599,17 +599,14 @@
   <button class="tab-btn active" data-tab="travel">
     <span class="ti">✈️</span>Travel
   </button>
-  <button class="tab-btn" data-tab="packing">
-    <span class="ti">🧳</span>Packing
+  <button class="tab-btn" data-tab="dreams">
+    <span class="ti">✨</span>Dreams
   </button>
   <button class="tab-btn" data-tab="weather">
     <span class="ti">🌤️</span>Weather
   </button>
-  <button class="tab-btn" data-tab="dreams">
-    <span class="ti">✨</span>Dreams
-  </button>
-  <button class="tab-btn" data-tab="todos">
-    <span class="ti">✅</span>To-Do
+  <button class="tab-btn" data-tab="packing">
+    <span class="ti">🧳</span>Packing
   </button>
 </nav>
 
@@ -642,68 +639,89 @@
 
     <div id="flights-list"><div class="loading">⏳ Loading…</div></div>
 
-    <!-- Cruise Reminders -->
-    <div style="margin-top:32px">
-      <div class="section-title" style="font-size:20px;margin-bottom:4px">📋 Cruise Reminders & Sky Class Tips</div>
-      <div class="section-sub">Policies and tips for the Allure sailing — tailored for Sky Class guests.</div>
-      <div class="policy-grid">
-
-        <div class="policy-card" style="border-left-color:var(--terra)">
-          <span class="pc-icon">🥂</span>
-          <strong>Alcohol Policy</strong>
-          Each adult may bring <em>one 750ml bottle of wine or champagne</em> on boarding day via carry-on. No boxed wine. All other purchased bottles stored until final day.
-        </div>
-
-        <div class="policy-card" style="border-left-color:var(--teal)">
-          <span class="pc-icon">🧴</span>
-          <strong>Reef-Safe Sunscreen Required</strong>
-          Jamaica &amp; Bahamas ban oxybenzone, octinoxate, octocrylene &amp; titanium dioxide. Buy reef-safe before you go — hard to find at ports.
-        </div>
-
-        <div class="policy-card" style="border-left-color:var(--purple)">
-          <span class="pc-icon">📱</span>
-          <strong>Online Check-In</strong>
-          Complete at RoyalCaribbean.com by <strong>June 18</strong> (3 days before sailing). Print SetSail passes and bring them to the pier.
-        </div>
-
-        <div class="policy-card" style="border-left-color:var(--success)">
-          <span class="pc-icon">💊</span>
-          <strong>Medications in Carry-On</strong>
-          Keep all medications in carry-on, in original labeled containers. Pack 3 extra days in case of itinerary changes.
-        </div>
-
-        <div class="policy-card" style="border-left-color:var(--mustard)">
-          <span class="pc-icon">🎭</span>
-          <strong>Shows: Use Your Concierge</strong>
-          Broadway productions and AquaTheater shows have reserved Sky Class seating sections. Share your show preferences in the <em>suite welcome email</em> — no need to book independently beforehand.
-        </div>
-
-        <div class="policy-card" style="border-left-color:var(--terra)">
-          <span class="pc-icon">👑</span>
-          <strong>Sky Class Boarding</strong>
-          As Sky Class guests, you board through a <strong>dedicated priority lane</strong> before general boarding. No need to race to the pier — you won't wait in the main queue.
-        </div>
-
-        <div class="policy-card" style="border-left-color:var(--teal)">
-          <span class="pc-icon">🍳</span>
-          <strong>Skip the Buffet for Breakfast</strong>
-          Room service breakfast is included in your suite. Or head to <strong>Coastal Kitchen</strong> — the suite-exclusive restaurant with sit-down service. Both beat the Windjammer every time.
-        </div>
-
-        <div class="policy-card" style="border-left-color:var(--navy)">
-          <span class="pc-icon">💵</span>
-          <strong>$1 Bills for the Ports</strong>
-          Jamaica and Nassau have a strong tip culture. Bring a stack of $1 bills for vendors, local guides, and photo opportunities ashore.
-        </div>
-
-      </div>
-    </div>
-
     <!-- Transit Section -->
     <div style="margin-top:36px" id="transit-section">
       <div class="section-title" style="font-size:20px;margin-bottom:4px">🚌 Getting To &amp; From the Ship</div>
       <div class="section-sub">How each family is traveling to and from Port Everglades.</div>
       <div id="transit-content"><div class="loading">⏳ Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- ── DREAMS TAB ── -->
+  <div class="tab-panel" id="panel-dreams">
+    <div class="section-title">✨ Dream List</div>
+    <div class="section-sub">Up to 3 dreams per person. Link matching dreams or join someone else's activity — joining doesn't count toward your cap.</div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;background:var(--navy);border-radius:var(--radius-sm);padding:12px 16px;box-shadow:var(--shadow)">
+      <span style="font-size:14px;font-weight:700;color:rgba(255,255,255,0.75);white-space:nowrap">👤 I am:</span>
+      <select id="dream-viewer" onchange="renderDreams()" style="font-size:16px;font-weight:700;border:none;background:transparent;color:#F5C842;flex:1;cursor:pointer"></select>
+    </div>
+    <div class="person-grid" id="dreams-grid"><div class="loading">⏳ Loading…</div></div>
+
+    <div id="dream-calendar-section" style="margin-top:36px;display:none">
+      <div class="section-title" style="font-size:20px;margin-bottom:4px">📅 Cruise Calendar</div>
+      <div class="section-sub">Dreams assigned to each day of the trip.</div>
+      <div class="dream-calendar" id="dream-calendar"></div>
+    </div>
+  </div>
+
+  <!-- ── WEATHER TAB ── -->
+  <div class="tab-panel" id="panel-weather">
+    <div class="section-title">🌤️ Port-by-Port Weather</div>
+    <div class="section-sub">Forecast for each stop. Check back closer to departure for the most accurate forecast!</div>
+    <div class="weather-grid" id="weather-grid"><div class="loading" style="grid-column:1/-1">⏳ Loading forecasts…</div></div>
+    <p id="weather-note" style="text-align:center;font-size:14px;color:var(--text-light);margin-top:16px;display:none">
+      ℹ️ Forecasts from Open-Meteo. Accuracy improves within 7 days of the trip.
+    </p>
+
+    <!-- Theme Nights -->
+    <div style="margin-top:36px">
+      <div class="section-title" style="font-size:20px;margin-bottom:4px">🎭 Theme Nights</div>
+      <div class="section-sub">Royal Caribbean dinner dress codes for each evening of the sailing.</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:16px">
+
+        <div style="background:var(--white);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);border-top:4px solid var(--teal)">
+          <div style="font-size:13px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Night 1 · Jun 21</div>
+          <div style="font-size:26px;margin-bottom:6px">👗</div>
+          <div style="font-size:18px;font-weight:800;color:var(--navy)">Resort Casual</div>
+          <div style="font-size:13px;color:var(--text-light);margin-top:4px">Embarkation night — sundresses, polos, smart casual</div>
+        </div>
+
+        <div style="background:var(--white);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);border-top:4px solid var(--teal)">
+          <div style="font-size:13px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Night 2 · Jun 22</div>
+          <div style="font-size:26px;margin-bottom:6px">👗</div>
+          <div style="font-size:18px;font-weight:800;color:var(--navy)">Resort Casual</div>
+          <div style="font-size:13px;color:var(--text-light);margin-top:4px">Day at sea — relaxed elegance, no jeans or flip-flops</div>
+        </div>
+
+        <div style="background:var(--white);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);border-top:4px solid var(--purple)">
+          <div style="font-size:13px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Night 3 · Jun 23</div>
+          <div style="font-size:26px;margin-bottom:6px">✨</div>
+          <div style="font-size:18px;font-weight:800;color:var(--navy)">Dress Your Best</div>
+          <div style="font-size:13px;color:var(--text-light);margin-top:4px">Formal night — suits, gowns, cocktail attire</div>
+        </div>
+
+        <div style="background:var(--white);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);border-top:4px solid var(--terra)">
+          <div style="font-size:13px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Night 4 · Jun 24</div>
+          <div style="font-size:26px;margin-bottom:6px">🌴</div>
+          <div style="font-size:18px;font-weight:800;color:var(--navy)">Caribbean</div>
+          <div style="font-size:13px;color:var(--text-light);margin-top:4px">Bright colors, tropical prints, island vibes</div>
+        </div>
+
+        <div style="background:var(--white);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);border-top:4px solid var(--mustard)">
+          <div style="font-size:13px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Night 5 · Jun 25</div>
+          <div style="font-size:26px;margin-bottom:6px">🤍</div>
+          <div style="font-size:18px;font-weight:800;color:var(--navy)">White Night / Latin Night</div>
+          <div style="font-size:13px;color:var(--text-light);margin-top:4px">All-white outfits encouraged — dancing on deck!</div>
+        </div>
+
+        <div style="background:var(--white);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);border-top:4px solid #ccc">
+          <div style="font-size:13px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Night 6 · Jun 26</div>
+          <div style="font-size:26px;margin-bottom:6px">❓</div>
+          <div style="font-size:18px;font-weight:800;color:var(--navy)">TBD</div>
+          <div style="font-size:13px;color:var(--text-light);margin-top:4px">Probably Resort Casual — confirm onboard</div>
+        </div>
+
+      </div>
     </div>
   </div>
 
@@ -739,45 +757,6 @@
     </div>
 
     <div id="packing-content"><div class="loading">⏳ Loading…</div></div>
-  </div>
-
-  <!-- ── WEATHER TAB ── -->
-  <div class="tab-panel" id="panel-weather">
-    <div class="section-title">🌤️ Port-by-Port Weather</div>
-    <div class="section-sub">Forecast for each stop. Check back closer to departure for the most accurate forecast!</div>
-    <div class="weather-grid" id="weather-grid"><div class="loading" style="grid-column:1/-1">⏳ Loading forecasts…</div></div>
-    <p id="weather-note" style="text-align:center;font-size:14px;color:var(--text-light);margin-top:16px;display:none">
-      ℹ️ Forecasts from Open-Meteo. Accuracy improves within 7 days of the trip.
-    </p>
-  </div>
-
-  <!-- ── DREAMS TAB ── -->
-  <div class="tab-panel" id="panel-dreams">
-    <div class="section-title">✨ Dream List</div>
-    <div class="section-sub">Up to 3 dreams per person. Link matching dreams or join someone else's activity — joining doesn't count toward your cap.</div>
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;background:var(--navy);border-radius:var(--radius-sm);padding:12px 16px;box-shadow:var(--shadow)">
-      <span style="font-size:14px;font-weight:700;color:rgba(255,255,255,0.75);white-space:nowrap">👤 I am:</span>
-      <select id="dream-viewer" onchange="renderDreams()" style="font-size:16px;font-weight:700;border:none;background:transparent;color:#F5C842;flex:1;cursor:pointer"></select>
-    </div>
-    <div class="person-grid" id="dreams-grid"><div class="loading">⏳ Loading…</div></div>
-
-    <div id="dream-calendar-section" style="margin-top:36px;display:none">
-      <div class="section-title" style="font-size:20px;margin-bottom:4px">📅 Cruise Calendar</div>
-      <div class="section-sub">Dreams assigned to each day of the trip.</div>
-      <div class="dream-calendar" id="dream-calendar"></div>
-    </div>
-  </div>
-
-  <!-- ── TO-DO TAB ── -->
-  <div class="tab-panel" id="panel-todos">
-    <div class="page-top">
-      <div>
-        <div class="section-title">✅ To-Do List</div>
-        <div class="section-sub">Organized by when you can take action.</div>
-      </div>
-      <button class="btn btn-primary" onclick="openTodoModal()">+ Add Task</button>
-    </div>
-    <div id="todos-list"><div class="loading">⏳ Loading…</div></div>
   </div>
 
 </main>
@@ -1092,52 +1071,6 @@
   </div>
 </div>
 
-<!-- To-Do Modal -->
-<div class="modal-bg hidden" id="m-todo">
-  <div class="modal">
-    <h3 id="todo-modal-title">✅ Add a Task</h3>
-    <input type="hidden" id="t-edit-id">
-    <div class="form-group">
-      <label>Task Title</label>
-      <input type="text" id="t-title" placeholder="e.g. Buy travel insurance">
-    </div>
-    <div class="form-group">
-      <label>Details <span style="font-weight:400;color:var(--text-light)">(optional)</span></label>
-      <textarea id="t-desc" placeholder="Any extra info…" style="min-height:60px"></textarea>
-    </div>
-    <div class="form-group">
-      <label>When can you act on this?</label>
-      <select id="t-bucket">
-        <option value="do_now">🟢 Do Now — No blockers today</option>
-        <option value="waiting_concierge">⏳ Waiting on Concierge Email</option>
-        <option value="waiting_itinerary">📋 Waiting on Full RC Itinerary</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>Assign To</label>
-      <select id="t-assign">
-        <option value="">Anyone</option>
-        <option value="All Families">All Families</option>
-        <option value="Swanson Family">Swanson Family</option>
-        <option value="McNamara Family">McNamara Family</option>
-        <option value="PJ">PJ</option>
-        <option value="Michelle McNamara">Michelle McNamara</option>
-        <option value="Jeremy">Jeremy</option>
-        <option value="Rob">Rob</option>
-        <option value="Bree">Bree</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>Due Date <span style="font-weight:400;color:var(--text-light)">(optional)</span></label>
-      <input type="date" id="t-due">
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="closeModal('m-todo')">Cancel</button>
-      <button class="btn btn-primary" onclick="saveTodo()">Add Task ✅</button>
-    </div>
-  </div>
-</div>
-
 <!-- Transit Edit Modal -->
 <div class="modal-bg hidden" id="m-transit">
   <div class="modal">
@@ -1231,7 +1164,6 @@ const WMO = {
 
 // ── STATE ──
 let curFamily  = 'Swanson';
-let allTodos   = [];
 let allFlights = [];
 let allDreams  = [];
 let allTransit = [];
@@ -2353,181 +2285,13 @@ async function toggleJoin(dreamId, dreamOwner) {
   loadDreams();
 }
 
-// ══════════════════════════════════════════
-// TO-DO TAB — BUCKET MODEL
-// ══════════════════════════════════════════
-function openTodoModal() {
-  document.getElementById('t-edit-id').value = '';
-  document.getElementById('todo-modal-title').textContent = '✅ Add a Task';
-  document.getElementById('t-title').value  = '';
-  document.getElementById('t-desc').value   = '';
-  document.getElementById('t-due').value    = '';
-  document.getElementById('t-bucket').value = 'do_now';
-  document.getElementById('t-assign').value = '';
-  openModal('m-todo');
-}
-
-function openTodoEdit(id) {
-  const t = allTodos.find(x => x.id === id);
-  if (!t) return;
-  document.getElementById('t-edit-id').value = id;
-  document.getElementById('todo-modal-title').textContent = '✏️ Edit Task';
-  document.getElementById('t-title').value  = t.title;
-  document.getElementById('t-desc').value   = t.description || '';
-  document.getElementById('t-due').value    = t.due_date || '';
-  document.getElementById('t-bucket').value = t.action_group || 'do_now';
-  document.getElementById('t-assign').value = t.assigned_to || '';
-  openModal('m-todo');
-}
-
-async function loadTodos() {
-  const { data } = await sb.from('vacation_todos').select('*').order('created_at');
-  allTodos = data || [];
-  renderTodos();
-}
-
-function renderTodoItem(t) {
-  const barColor = { do_now:'var(--terra)', waiting_concierge:'var(--mustard)', waiting_itinerary:'var(--teal)' }[t.action_group] || 'var(--border)';
-  const dueStr = t.due_date ? `📅 Due ${new Date(t.due_date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}` : '';
-  return `<div class="todo-item" id="td-${t.id}">
-    <div class="t-bar" style="background:${barColor}"></div>
-    <div class="t-body">
-      <div class="t-title">${t.title}</div>
-      <div class="t-meta">
-        ${t.assigned_to ? `<span>👤 ${t.assigned_to}</span>` : ''}
-        ${dueStr ? `<span>${dueStr}</span>` : ''}
-      </div>
-      ${t.description ? `<div class="t-desc">${t.description}</div>` : ''}
-    </div>
-    <div class="t-actions">
-      <button class="btn btn-teal btn-sm" onclick="markTodoDone('${t.id}')">✅ Mark as done</button>
-      <button class="btn btn-sm" style="background:var(--mustard-light);color:var(--navy);border:none;font-weight:700;cursor:pointer;padding:8px 12px;border-radius:8px;font-size:13px" onclick="openTodoEdit('${t.id}')">✏️ Edit</button>
-      <select class="bucket-mover" onchange="moveBucket('${t.id}',this.value)" title="Move to bucket">
-        <option value="do_now"             ${t.action_group==='do_now'?'selected':''}>🟢 Do Now</option>
-        <option value="waiting_concierge"  ${t.action_group==='waiting_concierge'?'selected':''}>⏳ Concierge</option>
-        <option value="waiting_itinerary"  ${t.action_group==='waiting_itinerary'?'selected':''}>📋 Itinerary</option>
-      </select>
-      <button class="del-btn" onclick="delTodo('${t.id}')">🗑️</button>
-    </div>
-  </div>`;
-}
-
-function renderTodoDone(t) {
-  return `<div class="todo-item t-done" id="td-${t.id}">
-    <div class="t-bar" style="background:var(--success)"></div>
-    <div class="t-body">
-      <div class="t-title">${t.title}</div>
-      ${t.assigned_to ? `<div class="t-meta">👤 ${t.assigned_to}</div>` : ''}
-    </div>
-    <div class="t-actions">
-      <button class="btn btn-ghost btn-sm" onclick="restoreTodo('${t.id}')">↩️ Restore</button>
-      <button class="del-btn" onclick="delTodo('${t.id}')">🗑️</button>
-    </div>
-  </div>`;
-}
-
-function renderTodos() {
-  const el = document.getElementById('todos-list');
-  const active = allTodos.filter(t => t.status !== 'done');
-  const done   = allTodos.filter(t => t.status === 'done');
-
-  const buckets = [
-    { key:'do_now',            label:'🟢 Do Now',                   cls:'bucket-do',   sub:'Tasks you can act on right now' },
-    { key:'waiting_concierge', label:'⏳ Waiting on Concierge Email', cls:'bucket-wait', sub:'Blocked until the suite welcome email arrives' },
-    { key:'waiting_itinerary', label:'📋 Waiting on Full RC Itinerary', cls:'bucket-itin', sub:'Needs the complete Royal Caribbean schedule' },
-  ];
-
-  let html = '';
-  for (const b of buckets) {
-    const items = active.filter(t => t.action_group === b.key);
-    html += `<div class="bucket-section">
-      <div class="bucket-hd ${b.cls}">
-        <div>
-          <div>${b.label}</div>
-          <div style="font-size:13px;font-weight:500;opacity:0.75;margin-top:2px">${b.sub}</div>
-        </div>
-        <span class="bucket-count">${items.length}</span>
-      </div>`;
-    if (!items.length) {
-      html += `<p style="color:var(--text-light);font-style:italic;padding:4px 0 12px;font-size:16px">All clear! Nothing here.</p>`;
-    } else {
-      html += items.map(renderTodoItem).join('');
-    }
-    html += `</div>`;
-  }
-
-  if (done.length) {
-    html += `<details>
-      <summary class="bucket-hd bucket-done" style="cursor:pointer">
-        <div>✅ Done <span style="font-size:13px;font-weight:500;opacity:0.75"> — ${done.length} completed task${done.length===1?'':''}</span></div>
-        <span class="bucket-count">${done.length}</span>
-      </summary>
-      <div style="margin-top:8px">${done.map(renderTodoDone).join('')}</div>
-    </details>`;
-  }
-
-  if (!allTodos.length) {
-    el.innerHTML = `<div class="empty-state"><div class="empty-icon">✅</div><p>No tasks yet — add one above!</p></div>`;
-    return;
-  }
-
-  el.innerHTML = html;
-}
-
-async function saveTodo() {
-  const title = document.getElementById('t-title').value.trim();
-  if (!title) { toast('Please enter a task title','err'); return; }
-  const editId = document.getElementById('t-edit-id').value;
-  const payload = {
-    title,
-    description:  document.getElementById('t-desc').value,
-    action_group: document.getElementById('t-bucket').value,
-    priority:     document.getElementById('t-bucket').value === 'do_now' ? 'high' : 'medium',
-    assigned_to:  document.getElementById('t-assign').value,
-    due_date:     document.getElementById('t-due').value || null,
-  };
-  let error;
-  if (editId) {
-    ({ error } = await sb.from('vacation_todos').update(payload).eq('id', editId));
-  } else {
-    payload.status = 'pending';
-    ({ error } = await sb.from('vacation_todos').insert(payload));
-  }
-  if (error) { toast('Error saving task','err'); return; }
-  toast(editId ? 'Task updated! ✅' : 'Task added! ✅');
-  closeModal('m-todo');
-  loadTodos();
-}
-
-async function markTodoDone(id) {
-  await sb.from('vacation_todos').update({ status:'done' }).eq('id', id);
-  loadTodos();
-}
-
-async function restoreTodo(id) {
-  await sb.from('vacation_todos').update({ status:'pending' }).eq('id', id);
-  loadTodos();
-}
-
-async function moveBucket(id, bucket) {
-  await sb.from('vacation_todos').update({ action_group: bucket }).eq('id', id);
-  loadTodos();
-}
-
-async function delTodo(id) {
-  if (!confirm('Remove this task?')) return;
-  await sb.from('vacation_todos').delete().eq('id', id);
-  toast('Task removed');
-  loadTodos();
-}
-
 // ── INIT ──
 (async function init() {
   updateCountdown();
   setInterval(updateCountdown, 60000);
   renderBanner();
   bannerTimer = setInterval(nextBanner, 20000);
-  await Promise.all([loadFlights(), loadPacking('Swanson'), loadDreams(), loadTodos(), loadTransit()]);
+  await Promise.all([loadFlights(), loadPacking('Swanson'), loadDreams(), loadTransit()]);
   loadSharedOverview();
   loadWeather();
 })();
