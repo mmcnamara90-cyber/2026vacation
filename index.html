@@ -589,7 +589,7 @@
     <h1>Allure of the Seas</h1>
   </div>
   <div class="header-sub">
-    June 21–28, 2026 · Swansons · McNamaras · PJ
+    June 21–28, 2026 · Denver Group · Jenkintown Group
     <span class="countdown-chip" id="countdown">Loading…</span>
   </div>
 </header>
@@ -740,9 +740,8 @@
     <div id="shared-overview"></div>
 
     <div class="family-tabs">
-      <button class="family-tab fs" data-family="Swanson"  onclick="selectFamily('Swanson')">🏄 Swansons</button>
-      <button class="family-tab"    data-family="McNamara" onclick="selectFamily('McNamara')">🌺 McNamaras</button>
-      <button class="family-tab"    data-family="PJ"       onclick="selectFamily('PJ')">🎉 PJ</button>
+      <button class="family-tab fs" data-family="Denver"     onclick="selectFamily('Denver')">🏔️ Denver Group</button>
+      <button class="family-tab"    data-family="Jenkintown" onclick="selectFamily('Jenkintown')">🌆 Jenkintown Group</button>
     </div>
 
     <!-- Filter bar -->
@@ -771,9 +770,8 @@
     <div class="form-group">
       <label>Which family?</label>
       <select id="f-fam">
-        <option value="Swanson">🏄 Swanson Family</option>
-        <option value="McNamara">🌺 McNamara Family</option>
-        <option value="PJ">🎉 PJ</option>
+        <option value="Denver">🏔️ Denver Group</option>
+        <option value="Jenkintown">🌆 Jenkintown Group</option>
       </select>
     </div>
     <div class="form-group">
@@ -956,10 +954,9 @@
     <div class="form-group" id="p-sharedby-group" style="display:none">
       <label>Who's bringing it?</label>
       <select id="p-sharedby">
-        <option value="">— Pick a family —</option>
-        <option value="Swanson">🏄 Swanson</option>
-        <option value="McNamara">🌺 McNamara</option>
-        <option value="PJ">🎉 PJ</option>
+        <option value="">— Pick a group —</option>
+        <option value="Denver">🏔️ Denver Group</option>
+        <option value="Jenkintown">🌆 Jenkintown Group</option>
       </select>
     </div>
     <div class="form-group">
@@ -1116,22 +1113,21 @@ const sb = createClient(
 
 // ── CONSTANTS ──
 const FAMILIES = {
-  Swanson:  { members: ['Swanson Family', 'Michelle McNamara', 'Jeremy', 'Audrey', 'Beau'],  bg: '#D04A28', light: '#FDEAE5' },
-  McNamara: { members: ['McNamara Family', 'Rob', 'Bree', 'Finn', 'May', 'Emmy'],  bg: '#1A8C7A', light: '#E0F4F1' },
-  PJ:       { members: ['PJ'],                                                       bg: '#7C3AED', light: '#F3EEFF' },
+  Denver:     { members: ['Denver Group', 'Michelle McNamara', 'Jeremy', 'Audrey', 'Beau'], bg: '#D04A28', light: '#FDEAE5' },
+  Jenkintown: { members: ['Jenkintown Group', 'Rob', 'Bree', 'Finn', 'May', 'Emmy', 'PJ'], bg: '#1A8C7A', light: '#E0F4F1' },
 };
 
 const PEOPLE = [
-  { person: 'Michelle McNamara', family: 'Swanson' },
-  { person: 'Jeremy',   family: 'Swanson' },
-  { person: 'Audrey',   family: 'Swanson' },
-  { person: 'Beau',     family: 'Swanson' },
-  { person: 'Rob',      family: 'McNamara' },
-  { person: 'Bree',     family: 'McNamara' },
-  { person: 'Finn',     family: 'McNamara' },
-  { person: 'May',      family: 'McNamara' },
-  { person: 'Emmy',     family: 'McNamara' },
-  { person: 'PJ',       family: 'PJ' },
+  { person: 'Michelle McNamara', family: 'Denver' },
+  { person: 'Jeremy',   family: 'Denver' },
+  { person: 'Audrey',   family: 'Denver' },
+  { person: 'Beau',     family: 'Denver' },
+  { person: 'Rob',      family: 'Jenkintown' },
+  { person: 'Bree',     family: 'Jenkintown' },
+  { person: 'Finn',     family: 'Jenkintown' },
+  { person: 'May',      family: 'Jenkintown' },
+  { person: 'Emmy',     family: 'Jenkintown' },
+  { person: 'PJ',       family: 'Jenkintown' },
 ];
 
 const ITINERARY = [
@@ -1163,7 +1159,7 @@ const WMO = {
 };
 
 // ── STATE ──
-let curFamily  = 'Swanson';
+let curFamily  = 'Denver';
 let allFlights = [];
 let allDreams  = [];
 let allTransit = [];
@@ -1499,7 +1495,7 @@ function renderTransit() {
       const cfg = FAMILIES[t.family] || { bg:'#888', light:'#eee' };
       const isAir2Sea = t.method === 'air2sea';
       return `<div class="transit-card">
-        <div class="transit-head" style="background:${cfg.bg}">${t.family === 'PJ' ? '🎉 PJ' : t.family === 'Swanson' ? '🏄 Swansons' : '🌺 McNamaras'}</div>
+        <div class="transit-head" style="background:${cfg.bg}">${t.family === 'Denver' ? '🏔️ Denver Group' : '🌆 Jenkintown Group'}</div>
         <div class="transit-body">
           <div class="transit-method">${TRANSIT_LABELS[t.method] || '❓ Not Decided'}</div>
           ${t.notes ? `<div class="transit-note">${t.notes}</div>` : ''}
@@ -1526,7 +1522,8 @@ function openTransitEdit(id) {
   document.getElementById('tr-notes').value  = t.notes || '';
   document.getElementById('tr-confirmed').checked = t.confirmed;
   const dirLabel = t.direction === 'to_ship' ? 'To the Ship' : 'Getting Home';
-  document.getElementById('transit-modal-title').textContent = `✏️ ${t.family} — ${dirLabel}`;
+  const groupLabel = t.family === 'Denver' ? '🏔️ Denver Group' : '🌆 Jenkintown Group';
+  document.getElementById('transit-modal-title').textContent = `✏️ ${groupLabel} — ${dirLabel}`;
   openModal('m-transit');
 }
 
@@ -1707,9 +1704,8 @@ function selectFamily(fam) {
   document.querySelectorAll('.family-tab').forEach(t => {
     t.className = 'family-tab';
     if (t.dataset.family === fam) {
-      if (fam==='Swanson') t.classList.add('fs');
-      else if (fam==='McNamara') t.classList.add('fm');
-      else t.classList.add('fpj');
+      if (fam==='Denver') t.classList.add('fs');
+      else t.classList.add('fm');
     }
   });
   loadPacking(fam);
@@ -2291,7 +2287,7 @@ async function toggleJoin(dreamId, dreamOwner) {
   setInterval(updateCountdown, 60000);
   renderBanner();
   bannerTimer = setInterval(nextBanner, 20000);
-  await Promise.all([loadFlights(), loadPacking('Swanson'), loadDreams(), loadTransit()]);
+  await Promise.all([loadFlights(), loadPacking('Denver'), loadDreams(), loadTransit()]);
   loadSharedOverview();
   loadWeather();
 })();
