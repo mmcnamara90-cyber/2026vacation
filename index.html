@@ -568,6 +568,18 @@
     hr.divider   { border: none; border-top: 2px solid var(--border); margin: 20px 0; }
     .page-top    { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 6px; }
 
+    /* ── Florida Shopping List ── */
+    .shop-item { display:flex; align-items:flex-start; gap:14px; background:var(--white); border-radius:var(--radius-sm); padding:14px 16px; box-shadow:var(--shadow); margin-bottom:10px; border-left:4px solid var(--teal); transition:opacity .2s; }
+    .shop-item.purchased { border-left-color:#ccc; opacity:.65; }
+    .shop-checkbox { width:24px; height:24px; flex-shrink:0; accent-color:var(--teal); cursor:pointer; margin-top:2px; }
+    .shop-body { flex:1; min-width:0; }
+    .shop-name { font-size:16px; font-weight:700; color:var(--navy); }
+    .shop-item.purchased .shop-name { text-decoration:line-through; color:var(--text-light); }
+    .shop-meta { font-size:13px; color:var(--text-light); margin-top:3px; display:flex; gap:12px; flex-wrap:wrap; }
+    .shop-notes { font-size:14px; color:var(--text-mid, #555); margin-top:6px; font-style:italic; }
+    .shop-actions { display:flex; gap:6px; align-items:center; }
+    .shop-section-head { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-light); margin:20px 0 8px; }
+
     details > summary { list-style: none; }
     details > summary::-webkit-details-marker { display: none; }
 
@@ -642,8 +654,20 @@
     <!-- Transit Section -->
     <div style="margin-top:36px" id="transit-section">
       <div class="section-title" style="font-size:20px;margin-bottom:4px">🚌 Getting To &amp; From the Ship</div>
-      <div class="section-sub">How each family is traveling to and from Port Everglades.</div>
+      <div class="section-sub">How each group is traveling to and from Port Everglades.</div>
       <div id="transit-content"><div class="loading">⏳ Loading…</div></div>
+    </div>
+
+    <!-- Florida Shopping List -->
+    <div style="margin-top:36px">
+      <div class="page-top" style="margin-bottom:4px">
+        <div>
+          <div class="section-title" style="font-size:20px;margin-bottom:4px">🛒 Florida Shopping List</div>
+          <div class="section-sub">Things to grab once you land in Fort Lauderdale.</div>
+        </div>
+        <button class="btn btn-primary" onclick="openFloridaModal()">+ Add Item</button>
+      </div>
+      <div id="florida-list"><div class="loading">⏳ Loading…</div></div>
     </div>
   </div>
 
@@ -1064,6 +1088,38 @@
     <div class="modal-foot">
       <button class="btn btn-ghost" onclick="closeModal('m-link')">Cancel</button>
       <button class="btn btn-purple" onclick="saveDreamLink()">Link Dreams 🔗</button>
+    </div>
+  </div>
+</div>
+
+<!-- Florida Shopping Modal -->
+<div class="modal-bg hidden" id="m-florida">
+  <div class="modal">
+    <h3 id="florida-modal-title">🛒 Add Shopping Item</h3>
+    <input type="hidden" id="fl-edit-id">
+    <div class="form-group">
+      <label>Item</label>
+      <input type="text" id="fl-item" placeholder="e.g. Reef-safe sunscreen">
+    </div>
+    <div class="form-row">
+      <div class="form-group" style="flex:1">
+        <label>Quantity</label>
+        <input type="number" id="fl-qty" value="1" min="1" style="width:100%">
+      </div>
+      <div class="form-group" style="flex:2">
+        <label>Assigned To</label>
+        <select id="fl-assignee">
+          <option value="">— Anyone —</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Notes <span style="font-weight:400;color:var(--text-light)">(optional)</span></label>
+      <textarea id="fl-notes" placeholder="e.g. SPF 50+, reef-safe formula" style="min-height:60px"></textarea>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-florida')">Cancel</button>
+      <button class="btn btn-teal" onclick="saveFloridaItem()">Save Item 🛒</button>
     </div>
   </div>
 </div>
@@ -2281,13 +2337,130 @@ async function toggleJoin(dreamId, dreamOwner) {
   loadDreams();
 }
 
+// ══════════════════════════════════════════
+// FLORIDA SHOPPING LIST
+// ══════════════════════════════════════════
+let allFloridaItems = [];
+
+async function loadFloridaShopping() {
+  const { data } = await sb.from('vacation_florida_shopping').select('*').order('created_at');
+  allFloridaItems = data || [];
+  renderFloridaShopping();
+}
+
+function renderFloridaShopping() {
+  const el = document.getElementById('florida-list');
+  const needed    = allFloridaItems.filter(i => !i.purchased);
+  const purchased = allFloridaItems.filter(i => i.purchased);
+
+  if (!allFloridaItems.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">🛒</div><p>No items yet — add something to grab in Florida!</p></div>`;
+    return;
+  }
+
+  function itemHtml(i) {
+    const person = i.assigned_to ? `👤 ${i.assigned_to}` : '';
+    const qty    = i.quantity > 1 ? `×${i.quantity}` : '';
+    return `<div class="shop-item${i.purchased ? ' purchased' : ''}" id="fl-${i.id}">
+      <input type="checkbox" class="shop-checkbox" ${i.purchased ? 'checked' : ''} onchange="toggleFloridaPurchased('${i.id}', this.checked)" title="Mark as purchased">
+      <div class="shop-body">
+        <div class="shop-name">${i.item}${qty ? ` <span style="font-size:14px;font-weight:500;color:var(--text-light)">(${qty})</span>` : ''}</div>
+        <div class="shop-meta">
+          ${person ? `<span>${person}</span>` : ''}
+          ${i.purchased ? `<span style="color:var(--success);font-weight:600">✅ Purchased</span>` : ''}
+        </div>
+        ${i.notes ? `<div class="shop-notes">${i.notes}</div>` : ''}
+      </div>
+      <div class="shop-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openFloridaEdit('${i.id}')">✏️</button>
+        <button class="del-btn" onclick="deleteFloridaItem('${i.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }
+
+  let html = '';
+  if (needed.length) {
+    html += `<div class="shop-section-head">Still needed — ${needed.length} item${needed.length===1?'':'s'}</div>`;
+    html += needed.map(itemHtml).join('');
+  }
+  if (purchased.length) {
+    html += `<details${needed.length ? '' : ' open'}>
+      <summary class="shop-section-head" style="cursor:pointer;list-style:none">✅ Purchased — ${purchased.length} item${purchased.length===1?'':'s'} ▸</summary>
+      <div style="margin-top:4px">${purchased.map(itemHtml).join('')}</div>
+    </details>`;
+  }
+  el.innerHTML = html;
+}
+
+function openFloridaModal() {
+  document.getElementById('fl-edit-id').value = '';
+  document.getElementById('florida-modal-title').textContent = '🛒 Add Shopping Item';
+  document.getElementById('fl-item').value  = '';
+  document.getElementById('fl-qty').value   = '1';
+  document.getElementById('fl-notes').value = '';
+  document.getElementById('fl-assignee').value = '';
+  // Populate assignee options
+  const sel = document.getElementById('fl-assignee');
+  sel.innerHTML = '<option value="">— Anyone —</option>' +
+    PEOPLE.map(p => `<option value="${p.person}">${p.person}</option>`).join('');
+  openModal('m-florida');
+}
+
+function openFloridaEdit(id) {
+  const i = allFloridaItems.find(x => x.id === id);
+  if (!i) return;
+  document.getElementById('fl-edit-id').value = id;
+  document.getElementById('florida-modal-title').textContent = '✏️ Edit Item';
+  document.getElementById('fl-item').value  = i.item;
+  document.getElementById('fl-qty').value   = i.quantity || 1;
+  document.getElementById('fl-notes').value = i.notes || '';
+  const sel = document.getElementById('fl-assignee');
+  sel.innerHTML = '<option value="">— Anyone —</option>' +
+    PEOPLE.map(p => `<option value="${p.person}"${p.person===i.assigned_to?' selected':''}>${p.person}</option>`).join('');
+  openModal('m-florida');
+}
+
+async function saveFloridaItem() {
+  const name = document.getElementById('fl-item').value.trim();
+  if (!name) { toast('Please enter an item name', 'err'); return; }
+  const editId = document.getElementById('fl-edit-id').value;
+  const payload = {
+    item:        name,
+    quantity:    parseInt(document.getElementById('fl-qty').value) || 1,
+    notes:       document.getElementById('fl-notes').value.trim() || null,
+    assigned_to: document.getElementById('fl-assignee').value || null,
+  };
+  let error;
+  if (editId) {
+    ({ error } = await sb.from('vacation_florida_shopping').update(payload).eq('id', editId));
+  } else {
+    ({ error } = await sb.from('vacation_florida_shopping').insert(payload));
+  }
+  if (error) { toast('Error saving item', 'err'); return; }
+  toast(editId ? 'Item updated! 🛒' : 'Item added! 🛒');
+  closeModal('m-florida');
+  loadFloridaShopping();
+}
+
+async function toggleFloridaPurchased(id, checked) {
+  await sb.from('vacation_florida_shopping').update({ purchased: checked }).eq('id', id);
+  loadFloridaShopping();
+}
+
+async function deleteFloridaItem(id) {
+  if (!confirm('Remove this item?')) return;
+  await sb.from('vacation_florida_shopping').delete().eq('id', id);
+  toast('Item removed');
+  loadFloridaShopping();
+}
+
 // ── INIT ──
 (async function init() {
   updateCountdown();
   setInterval(updateCountdown, 60000);
   renderBanner();
   bannerTimer = setInterval(nextBanner, 20000);
-  await Promise.all([loadFlights(), loadPacking('Denver'), loadDreams(), loadTransit()]);
+  await Promise.all([loadFlights(), loadPacking('Denver'), loadDreams(), loadTransit(), loadFloridaShopping()]);
   loadSharedOverview();
   loadWeather();
 })();
