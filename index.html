@@ -579,6 +579,7 @@
     .shop-notes { font-size:14px; color:var(--text-mid, #555); margin-top:6px; font-style:italic; }
     .shop-actions { display:flex; gap:6px; align-items:center; }
     .shop-section-head { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-light); margin:20px 0 8px; }
+    .pack-tag-bag { background: #E8EEFF; color: #2040A0; }
 
     details > summary { list-style: none; }
     details > summary::-webkit-details-marker { display: none; }
@@ -776,7 +777,11 @@
       <button class="pack-filter-btn" data-filter="packed"      onclick="setPackFilter('packed',this)">✅ Packed</button>
       <button class="pack-filter-btn" data-filter="shared"      onclick="setPackFilter('shared',this)">🤝 Shared</button>
       <button class="pack-filter-btn" data-filter="theme"       onclick="setPackFilter('theme',this)">🎉 Theme Night</button>
-      <button class="pack-filter-btn" data-filter="port"        onclick="setPackFilter('port',this)">🗺️ Port Tagged</button>
+      <button class="pack-filter-btn" data-filter="port"            onclick="setPackFilter('port',this)">🗺️ Port Tagged</button>
+      <button class="pack-filter-btn" data-filter="bag_green_away"  onclick="setPackFilter('bag_green_away',this)">🟩 Green Away</button>
+      <button class="pack-filter-btn" data-filter="bag_large_soft"  onclick="setPackFilter('bag_large_soft',this)">🧳 Soft Luggage</button>
+      <button class="pack-filter-btn" data-filter="bag_michelle_pack" onclick="setPackFilter('bag_michelle_pack',this)">🎒 Michelle's Pack</button>
+      <button class="pack-filter-btn" data-filter="bag_jeremy_pack" onclick="setPackFilter('bag_jeremy_pack',this)">🎒 Jeremy's Pack</button>
     </div>
 
     <div id="packing-content"><div class="loading">⏳ Loading…</div></div>
@@ -956,6 +961,16 @@
         <option value="unpacked">○ Not packed yet</option>
         <option value="need_to_buy">🛒 Need to buy</option>
         <option value="packed">✅ Already packed</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Bag / Location <span style="font-weight:400;color:var(--text-light)">(optional)</span></label>
+      <select id="p-bag">
+        <option value="">— Not assigned —</option>
+        <option value="green_away">🟩 Green Away Luggage</option>
+        <option value="large_soft">🧳 Large Soft Luggage</option>
+        <option value="michelle_pack">🎒 Michelle's Backpack</option>
+        <option value="jeremy_pack">🎒 Jeremy's Backpack</option>
       </select>
     </div>
     <div class="form-group">
@@ -1195,6 +1210,13 @@ const ITINERARY = [
   { date:'2026-06-26', label:'Jun 26', port:'Nassau, Bahamas',   emoji:'🇧🇸', sea:false, lat:25.0480, lon:-77.3580 },
   { date:'2026-06-27', label:'Jun 27', port:'Day at Sea',        emoji:'🌊', sea:true },
   { date:'2026-06-28', label:'Jun 28', port:'Fort Lauderdale',   emoji:'🇺🇸', sea:false, lat:26.1224, lon:-80.1373 },
+];
+
+const BAGS = [
+  { key: 'green_away',    label: '🟩 Green Away Luggage'  },
+  { key: 'large_soft',    label: '🧳 Large Soft Luggage'  },
+  { key: 'michelle_pack', label: "🎒 Michelle's Backpack" },
+  { key: 'jeremy_pack',   label: "🎒 Jeremy's Backpack"   },
 ];
 
 const TRANSIT_LABELS = {
@@ -1730,6 +1752,10 @@ function applyFilter(items) {
   if (packFilter === 'shared')      return items.filter(i => i.is_shared);
   if (packFilter === 'theme')       return items.filter(i => i.theme_night);
   if (packFilter === 'port')        return items.filter(i => i.port_day);
+  if (packFilter.startsWith('bag_')) {
+    const bagKey = packFilter.slice(4);
+    return items.filter(i => i.bag === bagKey);
+  }
   return items;
 }
 
@@ -1830,6 +1856,7 @@ function renderPacking(fam, allItems) {
           if (i.theme_night) tags.push(`<span class="pack-tag pack-tag-theme">🎉 ${i.theme_night}</span>`);
           if (i.port_day)    tags.push(`<span class="pack-tag pack-tag-port">🗺️ ${i.port_day}</span>`);
           if (st === 'need_to_buy') tags.push(`<span class="pack-tag pack-tag-buy">🛒 Need to buy</span>`);
+          if (i.bag) { const b = BAGS.find(x=>x.key===i.bag); tags.push(`<span class="pack-tag pack-tag-bag">${b?b.label:i.bag}</span>`); }
           html += `<div class="packing-item ${st==='packed'?'packed':''}" id="pi-${i.id}">
             <button class="status-btn s-${st}" onclick="cycleStatus('${i.id}','${st}','${fam}')" title="Tap to cycle: unpacked → need to buy → packed">${STATUS_ICON[st]||'○'}</button>
             <div class="pack-main">
@@ -1868,6 +1895,7 @@ function openPackModal(fam, person) {
   document.getElementById('p-shared').checked = false;
   document.getElementById('p-sharedby-group').style.display = 'none';
   document.getElementById('p-sharedby').value = '';
+  document.getElementById('p-bag').value    = '';
   document.getElementById('p-theme').value  = '';
   openModal('m-packing');
 }
@@ -1888,6 +1916,7 @@ function openPackEdit(id, fam) {
   document.getElementById('p-shared').checked = !!i.is_shared;
   document.getElementById('p-sharedby-group').style.display = i.is_shared ? '' : 'none';
   document.getElementById('p-sharedby').value = i.shared_by || '';
+  document.getElementById('p-bag').value    = i.bag || '';
   document.getElementById('p-theme').value  = i.theme_night || '';
   openModal('m-packing');
 }
@@ -1908,6 +1937,7 @@ async function savePackingItem() {
     is_shared:   isShared,
     shared_by:   isShared ? (document.getElementById('p-sharedby').value || null) : null,
     theme_night: document.getElementById('p-theme').value || null,
+    bag:         document.getElementById('p-bag').value || null,
   };
   let error;
   if (editId) {
