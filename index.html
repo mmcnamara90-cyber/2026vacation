@@ -581,6 +581,16 @@
     .shop-section-head { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-light); margin:20px 0 8px; }
     .pack-tag-bag { background: #E8EEFF; color: #2040A0; }
 
+    /* ── CLOTHING BY DAY ── */
+    .day-section { padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .day-section:last-child { border-bottom: none; }
+    .day-hd { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+    .day-hd-label { font-size: 15px; font-weight: 700; color: var(--navy); }
+    .day-hd-port { font-size: 13px; color: var(--text-light); }
+    .day-hd-theme { font-size: 11px; font-weight: 700; color: var(--purple); background: var(--purple-light); padding: 2px 8px; border-radius: 100px; }
+    .time-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-light); margin: 8px 0 2px; }
+    .person-chip { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 100px; font-size: 11px; font-weight: 700; color: white; margin-right: 5px; vertical-align: middle; flex-shrink: 0; }
+
     details > summary { list-style: none; }
     details > summary::-webkit-details-marker { display: none; }
 
@@ -944,7 +954,7 @@
     </div>
     <div class="form-group">
       <label>Category</label>
-      <select id="p-cat">
+      <select id="p-cat" onchange="toggleDayTime()">
         <option value="Clothes">👕 Clothes</option>
         <option value="Toiletries">🧴 Toiletries</option>
         <option value="Documents">📄 Documents &amp; ID</option>
@@ -973,15 +983,26 @@
         <option value="jeremy_pack">🎒 Jeremy's Backpack</option>
       </select>
     </div>
+    <div class="form-group" id="p-daytime-group" style="display:none">
+      <label>Time of Day</label>
+      <select id="p-daytime">
+        <option value="">All day / General</option>
+        <option value="day">☀️ Daywear</option>
+        <option value="night">🌙 Evening / Night outfit</option>
+      </select>
+    </div>
     <div class="form-group">
-      <label>Port Day <span style="font-weight:400;color:var(--text-light)">(optional)</span></label>
+      <label>Trip Day <span style="font-weight:400;color:var(--text-light)">(optional)</span></label>
       <select id="p-port">
-        <option value="">No specific port</option>
-        <option value="Fort Lauderdale">🚢 Fort Lauderdale (Jun 21)</option>
-        <option value="Falmouth">🇯🇲 Falmouth / Jamaica (Jun 23)</option>
-        <option value="CocoCay">🏝️ CocoCay (Jun 24)</option>
-        <option value="Nassau">🏖️ Nassau (Jun 25)</option>
-        <option value="Sea Day">🌊 Sea Day</option>
+        <option value="">No specific day</option>
+        <option value="Sat · Travel">🛫 Saturday, Jun 20 — Travel Day</option>
+        <option value="Sun · Boarding">🚢 Sunday, Jun 21 — Boarding Day</option>
+        <option value="Mon · Sea">🌊 Monday, Jun 22 — Day at Sea</option>
+        <option value="Tue · Jamaica">🇯🇲 Tuesday, Jun 23 — Jamaica</option>
+        <option value="Wed · Sea">🌊 Wednesday, Jun 24 — Day at Sea</option>
+        <option value="Thu · CocoCay">🏝️ Thursday, Jun 25 — CocoCay</option>
+        <option value="Fri · Nassau">🏖️ Friday, Jun 26 — Nassau</option>
+        <option value="Sat · Home">✈️ Saturday, Jun 27 — Return Day</option>
       </select>
     </div>
     <div class="form-group">
@@ -1218,6 +1239,24 @@ const BAGS = [
   { key: 'michelle_pack', label: "🎒 Michelle's Backpack" },
   { key: 'jeremy_pack',   label: "🎒 Jeremy's Backpack"   },
 ];
+
+const TRIP_DAYS = [
+  { key:'Sat · Travel',   label:'Saturday, Jun 20',  subLabel:'Travel Day',        themeNight: null },
+  { key:'Sun · Boarding', label:'Sunday, Jun 21',    subLabel:'Boarding Day',      themeNight:'👗 Night 1: Resort Casual' },
+  { key:'Mon · Sea',      label:'Monday, Jun 22',    subLabel:'Day at Sea',        themeNight:'👗 Night 2: Resort Casual' },
+  { key:'Tue · Jamaica',  label:'Tuesday, Jun 23',   subLabel:'Falmouth, Jamaica', themeNight:'✨ Night 3: Dress Your Best' },
+  { key:'Wed · Sea',      label:'Wednesday, Jun 24', subLabel:'Day at Sea',        themeNight:'🌴 Night 4: Caribbean' },
+  { key:'Thu · CocoCay',  label:'Thursday, Jun 25',  subLabel:'CocoCay, Bahamas',  themeNight:'🤍 Night 5: White Night' },
+  { key:'Fri · Nassau',   label:'Friday, Jun 26',    subLabel:'Nassau, Bahamas',   themeNight:'❓ Night 6: TBD' },
+  { key:'Sat · Home',     label:'Saturday, Jun 27',  subLabel:'Return Day',        themeNight: null },
+];
+
+const PERSON_COLORS = {
+  'Michelle McNamara': '#D04A28',
+  'Jeremy':            '#1B3350',
+  'Audrey':            '#D99218',
+  'Beau':              '#1A8C7A',
+};
 
 const TRANSIT_LABELS = {
   hotel_shuttle: '🚌 Hotel Shuttle',
@@ -1803,6 +1842,64 @@ async function loadPacking(fam) {
 const STATUS_ICON = { unpacked: '○', need_to_buy: '🛒', packed: '✅' };
 const STATUS_NEXT = { unpacked: 'need_to_buy', need_to_buy: 'packed', packed: 'unpacked' };
 
+function renderPackItemRow(i, fam, showPerson) {
+  const st = i.status || (i.packed ? 'packed' : 'unpacked');
+  const tags = [];
+  if (i.is_shared) {
+    const owner = i.shared_by ? ` · ${i.shared_by}` : '';
+    tags.push(`<span class="pack-tag pack-tag-shared">🤝 Shared${owner}</span>`);
+  }
+  if (i.theme_night) tags.push(`<span class="pack-tag pack-tag-theme">🎉 ${i.theme_night}</span>`);
+  if (st === 'need_to_buy') tags.push(`<span class="pack-tag pack-tag-buy">🛒 Need to buy</span>`);
+  if (i.bag) { const b = BAGS.find(x=>x.key===i.bag); tags.push(`<span class="pack-tag pack-tag-bag">${b?b.label:i.bag}</span>`); }
+  const chip = showPerson
+    ? `<span class="person-chip" style="background:${PERSON_COLORS[i.person]||'#888'}">${i.person.split(' ')[0]}</span>`
+    : '';
+  return `<div class="packing-item ${st==='packed'?'packed':''}" id="pi-${i.id}">
+    <button class="status-btn s-${st}" onclick="cycleStatus('${i.id}','${st}','${fam}')" title="Tap to cycle: unpacked → need to buy → packed">${STATUS_ICON[st]||'○'}</button>
+    <div class="pack-main">
+      <div class="pack-text">${chip}${i.item}${(i.quantity||1)>1?`<span class="pack-qty">×${i.quantity}</span>`:''}</div>
+      ${tags.length ? `<div class="pack-tags">${tags.join('')}</div>` : ''}
+    </div>
+    <button onclick="openPackEdit('${i.id}','${fam}')" class="del-btn" style="font-size:14px;color:var(--mustard)" title="Edit">✏️</button>
+    <button onclick="delPacking('${i.id}','${fam}')" class="del-btn">×</button>
+  </div>`;
+}
+
+function renderClothingByDay(clothingItems, fam) {
+  let html = '';
+  for (const day of TRIP_DAYS) {
+    const dayItems = clothingItems.filter(i => i.port_day === day.key);
+    if (!dayItems.length) continue;
+    const dayWear   = dayItems.filter(i => i.day_time === 'day');
+    const nightWear = dayItems.filter(i => i.day_time === 'night');
+    const general   = dayItems.filter(i => !i.day_time);
+    html += `<div class="day-section">
+      <div class="day-hd">
+        <span class="day-hd-label">${day.label}</span>
+        <span class="day-hd-port">${day.subLabel}</span>
+        ${day.themeNight ? `<span class="day-hd-theme">${day.themeNight}</span>` : ''}
+      </div>`;
+    if (dayWear.length) {
+      html += `<div class="time-label">☀️ Day</div>`;
+      dayWear.forEach(i => { html += renderPackItemRow(i, fam, true); });
+    }
+    if (nightWear.length) {
+      html += `<div class="time-label">🌙 Night</div>`;
+      nightWear.forEach(i => { html += renderPackItemRow(i, fam, true); });
+    }
+    general.forEach(i => { html += renderPackItemRow(i, fam, true); });
+    html += `</div>`;
+  }
+  const unassigned = clothingItems.filter(i => !i.port_day);
+  if (unassigned.length) {
+    html += `<div class="day-section"><div class="day-hd"><span class="day-hd-label">📦 Unassigned</span></div>`;
+    unassigned.forEach(i => { html += renderPackItemRow(i, fam, true); });
+    html += `</div>`;
+  }
+  return html || `<p style="color:var(--text-light);font-style:italic;padding:8px 0">No clothing items match this filter.</p>`;
+}
+
 function renderPacking(fam, allItems) {
   const cfg  = FAMILIES[fam];
   const el   = document.getElementById('packing-content');
@@ -1822,14 +1919,32 @@ function renderPacking(fam, allItems) {
     </div>
   </div>`;
 
+  // Split clothing from everything else
+  const clothingItems = items.filter(i => i.category === 'Clothes');
+  const otherItems    = items.filter(i => i.category !== 'Clothes');
+
   if (!items.length && packFilter !== 'all') {
     html += `<div class="card" style="text-align:center;color:var(--text-light);font-style:italic;padding:24px">No items match this filter.</div>`;
     el.innerHTML = html;
     return;
   }
 
+  // ── Clothing by Day card ──
+  const hasClothing = allItems.some(i => i.category === 'Clothes');
+  if (hasClothing || clothingItems.length) {
+    html += `<div class="card">
+      <div class="card-title">
+        👗 Clothing by Day
+        <button class="btn btn-sm" style="background:${cfg.light};color:${cfg.bg};border:none;font-weight:700;cursor:pointer;padding:8px 14px;border-radius:8px;font-size:13px" onclick="openPackModal('${fam}','${cfg.members[1]}')">+ Add Outfit</button>
+      </div>
+      ${renderClothingByDay(clothingItems, fam)}
+    </div>`;
+  }
+
+  // ── Per-person cards for non-clothing items ──
   for (const m of cfg.members) {
-    const mItems = items.filter(i => i.person === m);
+    const mItems = otherItems.filter(i => i.person === m);
+    if (!mItems.length && packFilter !== 'all') continue;
     html += `<div class="card">
       <div class="card-title">
         ${m}
@@ -1838,41 +1953,20 @@ function renderPacking(fam, allItems) {
           <button class="btn btn-sm" style="background:${cfg.light};color:${cfg.bg};border:none;font-weight:700;cursor:pointer;padding:8px 16px;border-radius:8px" onclick="openPackModal('${fam}','${m}')">+ Add</button>
         </div>
       </div>`;
-
     if (!mItems.length) {
-      html += `<p style="color:var(--text-light);font-style:italic">Nothing here — use Templates for a quick start, or Add to enter items manually.</p>`;
+      html += `<p style="color:var(--text-light);font-style:italic">No non-clothing items yet — use Templates or Add.</p>`;
     } else {
       const byCat = {};
       mItems.forEach(i => { if(!byCat[i.category]) byCat[i.category]=[]; byCat[i.category].push(i); });
       for (const [cat, catItems] of Object.entries(byCat)) {
         html += `<div class="cat-head">${cat}</div>`;
-        catItems.forEach(i => {
-          const st = i.status || (i.packed ? 'packed' : 'unpacked');
-          const tags = [];
-          if (i.is_shared) {
-            const owner = i.shared_by ? ` · ${i.shared_by}` : '';
-            tags.push(`<span class="pack-tag pack-tag-shared">🤝 Shared${owner}</span>`);
-          }
-          if (i.theme_night) tags.push(`<span class="pack-tag pack-tag-theme">🎉 ${i.theme_night}</span>`);
-          if (i.port_day)    tags.push(`<span class="pack-tag pack-tag-port">🗺️ ${i.port_day}</span>`);
-          if (st === 'need_to_buy') tags.push(`<span class="pack-tag pack-tag-buy">🛒 Need to buy</span>`);
-          if (i.bag) { const b = BAGS.find(x=>x.key===i.bag); tags.push(`<span class="pack-tag pack-tag-bag">${b?b.label:i.bag}</span>`); }
-          html += `<div class="packing-item ${st==='packed'?'packed':''}" id="pi-${i.id}">
-            <button class="status-btn s-${st}" onclick="cycleStatus('${i.id}','${st}','${fam}')" title="Tap to cycle: unpacked → need to buy → packed">${STATUS_ICON[st]||'○'}</button>
-            <div class="pack-main">
-              <div class="pack-text">${i.item}${(i.quantity||1)>1?`<span class="pack-qty">×${i.quantity}</span>`:''}</div>
-              ${tags.length ? `<div class="pack-tags">${tags.join('')}</div>` : ''}
-            </div>
-            <button onclick="openPackEdit('${i.id}','${fam}')" class="del-btn" style="font-size:14px;color:var(--mustard)" title="Edit item">✏️</button>
-            <button onclick="delPacking('${i.id}','${fam}')" class="del-btn">×</button>
-          </div>`;
-        });
+        catItems.forEach(i => { html += renderPackItemRow(i, fam, false); });
       }
     }
     html += '</div>';
   }
 
-  html += `<button class="btn btn-mustard btn-full" onclick="openPackModal('${fam}','${cfg.members[0]}')">+ Add Item for ${fam} Family</button>`;
+  html += `<button class="btn btn-mustard btn-full" onclick="openPackModal('${fam}','${cfg.members[0]}')">+ Add Item for ${fam} Group</button>`;
   el.innerHTML = html;
 }
 
@@ -1880,6 +1974,12 @@ function toggleSharedBy() {
   const checked = document.getElementById('p-shared').checked;
   document.getElementById('p-sharedby-group').style.display = checked ? '' : 'none';
   if (!checked) document.getElementById('p-sharedby').value = '';
+}
+
+function toggleDayTime() {
+  const isClothes = document.getElementById('p-cat').value === 'Clothes';
+  document.getElementById('p-daytime-group').style.display = isClothes ? '' : 'none';
+  if (!isClothes) document.getElementById('p-daytime').value = '';
 }
 
 function openPackModal(fam, person) {
@@ -1892,11 +1992,13 @@ function openPackModal(fam, person) {
   document.getElementById('p-cat').value    = 'Clothes';
   document.getElementById('p-status').value = 'unpacked';
   document.getElementById('p-port').value   = '';
+  document.getElementById('p-daytime').value = '';
   document.getElementById('p-shared').checked = false;
   document.getElementById('p-sharedby-group').style.display = 'none';
   document.getElementById('p-sharedby').value = '';
   document.getElementById('p-bag').value    = '';
   document.getElementById('p-theme').value  = '';
+  toggleDayTime();
   openModal('m-packing');
 }
 
@@ -1918,6 +2020,8 @@ function openPackEdit(id, fam) {
   document.getElementById('p-sharedby').value = i.shared_by || '';
   document.getElementById('p-bag').value    = i.bag || '';
   document.getElementById('p-theme').value  = i.theme_night || '';
+  document.getElementById('p-daytime').value = i.day_time || '';
+  toggleDayTime();
   openModal('m-packing');
 }
 
@@ -1938,6 +2042,7 @@ async function savePackingItem() {
     shared_by:   isShared ? (document.getElementById('p-sharedby').value || null) : null,
     theme_night: document.getElementById('p-theme').value || null,
     bag:         document.getElementById('p-bag').value || null,
+    day_time:    document.getElementById('p-daytime').value || null,
   };
   let error;
   if (editId) {
